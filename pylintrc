@@ -1,0 +1,56 @@
+[MASTER]
+
+load-plugins=pylint.extensions.docparams
+
+[FORMAT]
+
+# Maximum number of characters on a single line.
+max-line-length=88
+
+# Allow the body of an if to be on the same line as the test if there is no
+# else.
+single-line-if-stmt=yes
+
+# Maximum number of lines in a module
+max-module-lines=99999
+
+# String used as indentation unit.
+indent-string='    '
+
+# Number of spaces of indent required inside a hanging  or continued line.
+indent-after-paren=4
+
+# Expected format of line ending, e.g. empty (any line ending), LF or CRLF.
+expected-line-ending-format=
+
+[MESSAGES CONTROL]
+
+# Enable the message, report, category or checker with the given id(s). You can
+# either give multiple identifier separated by comma (,) or put this option
+# multiple time.
+#enable=
+
+# Disable the message, report, category or checker with the given id(s). You
+# can either give multiple identifier separated by comma (,) or put this option
+# multiple time (only on the command line, not in the configuration file where
+# it should appear only once).
+disable=invalid-name,missing-docstring
+
+[MISCELLANEOUS]
+
+# List of note tags to take in consideration, separated by a comma.
+notes=TODO,XXX
+
+
+[STRING]
+
+# This flag controls whether inconsistent-quotes generates a warning when the
+# character used as a quote delimiter is used inconsistently within a module.
+check-quote-consistency=yes
+
+[DOCPARAMS]
+accept-no-param-doc=Yes
+accept-no-raise-doc=Yes
+accept-no-return-doc=Yes
+accept-no-yields-doc=Yes
+default-docstring-type=google

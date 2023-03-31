@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hwconfig"
+description = ""
+readme = "README.md"
+license = { file = "LICENSE.md" }
+classifiers = ["Programming Language :: Python :: 3"]
+dependencies = ["click"]
+dynamic = ["version"]
+
+[project.scripts]
+hwconfig = "hwconfig.cli:hwconfig"
+
+[tool.setuptools.packages.find]
+where = ["src"]
