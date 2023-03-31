@@ -1,6 +1,6 @@
 from pathlib import Path
 import platform
-from subprocess import CalledProcessError, check_output
+from subprocess import CalledProcessError, check_output, check_call
 from typing import Union
 
 
@@ -11,6 +11,20 @@ def in_wsl() -> bool:
         True if running in a WSL instance, False if not.
     """
     return "microsoft-standard" in platform.uname().release
+
+
+def in_windows() -> bool:
+    return platform.system() == "Windows"
+
+
+def clone_repo(src_url: str, dst_dir: Path) -> None:
+    args = ["git", "clone", src_url]
+    check_call(args=args, shell=in_windows(), cwd=dst_dir)
+
+
+def update_repo(repo_dir: Path) -> None:
+    args = ["git", "pull"]
+    check_call(args=args, cwd=repo_dir, shell=in_windows())
 
 
 def ensure_dir(directory: Path) -> Path:

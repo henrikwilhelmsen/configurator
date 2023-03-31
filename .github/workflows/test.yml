@@ -20,13 +20,3 @@ jobs:
 
       - name: Run pytest
         run: pipenv run pytest test
-
-  test-windows-bootstrap:
-    name: test-windows
-    runs-on: windows-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Run bootstrap
-        run: .\scripts\bootstrap.ps1

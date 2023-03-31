@@ -3,12 +3,16 @@ from pathlib import Path
 
 import pytest
 
-from hwconfig.install import copy_terminal_settings, HWCONFIG_DIR
+from hwconfig.install import copy_terminal_settings, get_sync_config_data_dir
 
 
 @pytest.fixture(scope="function", name="setup_files")
-def fixture_setup_files(tmp_path: Path) -> tuple[Path, Path]:
-    source_file = HWCONFIG_DIR / "terminal" / "settings.json"
+def fixture_setup_files(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> tuple[Path, Path]:
+    monkeypatch.setenv("HWCONFIG_HOME", tmp_path.as_posix())
+    config_data_dir = get_sync_config_data_dir()
+    source_file = config_data_dir / "terminal" / "settings.json"
     test_data_file = Path(__file__).parent / "test_data" / "terminal_settings.json"
 
     with open(test_data_file, "r", encoding="utf-8") as f:

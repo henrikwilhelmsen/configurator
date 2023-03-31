@@ -1,59 +1,46 @@
 import json
 import platform
-import os
 from typing import Generator, List, Callable
 from pathlib import Path
 from shutil import copytree
-from subprocess import check_call
 
 from hwconfig.lib import (
     get_powershell_dir,
     ensure_dir,
     in_wsl,
+    clone_repo,
+    update_repo,
     get_windows_terminal_settings_file,
 )
+from hwconfig.constants import get_hwconfig_home_dir, get_config_data_url
+
+Installer = Callable[..., str]
 
 
-def get_config_data_repo() -> str:
-    source_env = os.getenv("HWCONFIG_DATA_SOURCE")
-    if source_env:
-        return source_env
+def get_sync_config_data_dir() -> Path:
+    data_url = get_config_data_url()
+    data_repo_name = data_url.rsplit("/", maxsplit=-1)[-1].split(".")[0]
+    hwconfig_home_dir = get_hwconfig_home_dir()
+    hwconfig_data_dir = hwconfig_home_dir / data_repo_name
 
-    return "https://github.com/henrikwilhelmsen/hw-config-data.git"
+    if not hwconfig_home_dir.exists():
+        hwconfig_home_dir.mkdir(parents=True)
 
+    if not hwconfig_data_dir.exists():
+        clone_repo(src_url=data_url, dst_dir=hwconfig_home_dir)
+    else:
+        update_repo(repo_dir=hwconfig_data_dir)
 
-HWCONFIG_DIR = Path.home() / ".hwconfig"
-CONFIG_DATA_REPO = get_config_data_repo()
-CONFIG_DATA_NAME = CONFIG_DATA_REPO.rsplit("/", maxsplit=-1)[-1].split(".")[0]
-CONFIG_DATA_DIR = HWCONFIG_DIR / CONFIG_DATA_NAME
-
-Installer = Callable[[], str]
-
-
-def get_config_data() -> None:
-    if not HWCONFIG_DIR.exists():
-        HWCONFIG_DIR.mkdir(parents=True)
-
-    args = ["git", "clone", CONFIG_DATA_REPO]
-    check_call(args=args, cwd=HWCONFIG_DIR)
+    return hwconfig_data_dir
 
 
-def update_config_data() -> None:
-
-    if not CONFIG_DATA_DIR.exists():
-        get_config_data()
-
-    args = ["git", "pull"]
-    check_call(args=args, cwd=CONFIG_DATA_DIR)
-
-
-def install_powershell_config() -> str:
+def install_powershell_config(data_dir: Path) -> str:
     """Install PowerShell config by copying the PowerShell config directory.
 
     Returns:
         A string saying the config was installed and to which directory.
     """
-    source_dir = HWCONFIG_DIR / "powershell"
+    source_dir = data_dir / "powershell"
     target_dir = get_powershell_dir()
 
     if not target_dir:
@@ -106,7 +93,7 @@ def copy_terminal_settings(source_file: Path, destination_file: Path) -> None:
         json.dump(destination_data, file)
 
 
-def install_windows_terminal_config() -> str:
+def install_windows_terminal_config(data_dir: Path) -> str:
     """Install Windows Terminal config.
 
     Does not overwrite the entire file, but inserts overrides on theme and appearance
@@ -115,7 +102,7 @@ def install_windows_terminal_config() -> str:
     Returns:
         A string saying the config was installed and to which file.
     """
-    source_config = CONFIG_DATA_DIR / "terminal" / "settings.json"
+    source_config = data_dir / "terminal" / "settings.json"
     target_config = get_windows_terminal_settings_file()
 
     if not target_config:
@@ -125,38 +112,38 @@ def install_windows_terminal_config() -> str:
     return f"windows terminal config installed ({target_config})"
 
 
-def install_fish_config() -> str:
+def install_fish_config(data_dir: Path) -> str:
     """Install Fish config by copying the contents of the Fish config directory.
 
     Returns:
         A string saying the config was installed and to which directory.
     """
-    source_dir = CONFIG_DATA_DIR / "fish"
+    source_dir = data_dir / "fish"
     target_dir = ensure_dir(Path.home().joinpath(".config/fish"))
     copytree(src=source_dir, dst=target_dir, dirs_exist_ok=True)
     return f"Fish config installed ({target_dir})"
 
 
-def install_alacritty_config() -> str:
+def install_alacritty_config(data_dir: Path) -> str:
     """
     Install Alacritty config by copying the contents of the Alacritty config directory.
 
     Returns:
         A string saying the config was installed and to which directory.
     """
-    source_dir = CONFIG_DATA_DIR / "alacritty"
+    source_dir = data_dir / "alacritty"
     target_dir = ensure_dir(Path.home().joinpath(".config/alacritty"))
     copytree(src=source_dir, dst=target_dir, dirs_exist_ok=True)
     return f"Alacritty config installed ({target_dir})"
 
 
-def install_hyper_config() -> str:
+def install_hyper_config(data_dir: Path) -> str:
     """Install Hyper config by copying the contents of the Hyper config directory.
 
     Returns:
         A string saying the config was installed and to which directory.
     """
-    source_dir = CONFIG_DATA_DIR / "hyper"
+    source_dir = data_dir / "hyper"
     target_dir = ensure_dir(Path.home())
     copytree(src=source_dir, dst=target_dir, dirs_exist_ok=True)
     return f"Hyper config installed ({target_dir})"
