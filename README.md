@@ -1,22 +1,21 @@
-# hw-terminal-config
+# hw-config-cli
 
-Manage and install my personal terminal configurations for Windows and Ubuntu.
+Python cli app to manage and install my config files for Windows and Ubuntu.
+
+Config files located in [hw-config-data](https://github.com/henrikwilhelmsen/hw-config-data)
 
 ## Installation
-
-- Clone the project with Git and open a terminal in the repository folder
 
 ### Install Windows dependencies
 
 ```PowerShell
-scripts\bootstrap.ps1
+Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/henrikwilhelmsen/hw-config-cli/dev/split-data-cli/scripts/bootstrap.ps1" -OutFile "./bootstrap.ps1"; &"./bootstrap.ps1"
 ```
 
 ### Install Ubuntu dependencies
 
 ```shell
-sudo chmod +x ./scripts/bootstrap.sh
-./scripts/bootstrap.sh
+curl -s https://raw.githubusercontent.com/henrikwilhelmsen/hw-config-cli/dev/split-data-cli/scripts/bootstrap.sh | bash
 ```
 
 ### Config Setup
@@ -24,7 +23,7 @@ sudo chmod +x ./scripts/bootstrap.sh
 Install the hwconfig cli with pipx:
 
 ```shell
-pipx install .
+pipx install git+https://github.com/henrikwilhelmsen/hw-config-cli.git@dev/split-data-cli
 ```
 
 Install the configs:
