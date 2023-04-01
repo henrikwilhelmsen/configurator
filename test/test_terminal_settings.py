@@ -10,6 +10,16 @@ from hwconfig.install import copy_terminal_settings, get_sync_config_data_dir
 def fixture_setup_files(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> tuple[Path, Path]:
+    """Test setup fixture, set hwconfig home to a tmp dir and create a dummy terminal
+    settings file to write to during the test.
+
+    Args:
+        tmp_path: Pytest fixture providing a temp directory
+        monkeypatch: Pytest fixture for monkeypatching attributes etc.
+
+    Returns:
+        A tuple with the path to the settings source and destination files.
+    """
     monkeypatch.setenv("HWCONFIG_HOME", tmp_path.as_posix())
     config_data_dir = get_sync_config_data_dir()
     source_file = config_data_dir / "terminal" / "settings.json"
@@ -27,6 +37,11 @@ def fixture_setup_files(
 
 
 def test_copy_terminal_settings(setup_files: tuple[Path, Path]) -> None:
+    """Check that the function copies profiles and default settings from the source
+
+    Args:
+        setup_files: Pytest setup fixture
+    """
     source_file, destination_file = setup_files
 
     copy_terminal_settings(source_file, destination_file)
@@ -39,6 +54,11 @@ def test_copy_terminal_settings(setup_files: tuple[Path, Path]) -> None:
 
 
 def test_copy_terminal_settings_schemes(setup_files: tuple[Path, Path]) -> None:
+    """Check that the function copies themes from source
+
+    Args:
+        setup_files: Pytest setup fixture
+    """
     source_file, destination_file = setup_files
 
     copy_terminal_settings(source_file, destination_file)

@@ -5,13 +5,13 @@ from hwconfig.install import get_installers, get_sync_config_data_dir
 
 @click.group()
 def hwconfig() -> None:
-    pass
+    """hwconfig cli"""
 
 
 @hwconfig.command()
 def install() -> None:
-    """Install config files"""
-    click.echo("Installing configs...")
+    """Sync and install config files"""
+    click.echo("Installing config files...")
 
     config_data_dir = get_sync_config_data_dir()
 
@@ -19,4 +19,4 @@ def install() -> None:
         result = installer(config_data_dir)
         click.echo(click.style(result, fg="green"))
 
-    click.echo("Configs installed!")
+    click.echo("Config files installed!")

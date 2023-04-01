@@ -18,5 +18,8 @@ jobs:
       - name: Analyze code with pylint
         run: pipenv run pylint src test
 
-      - name: Run pytest
+      - name: Run Pytest
         run: pipenv run pytest test
+
+      - name: Run hwconfig install
+        run: hwconfig install

@@ -1,33 +1,42 @@
 import json
 import platform
-from typing import Generator, List, Callable
 from pathlib import Path
 from shutil import copytree
+from typing import Callable, Generator, List
 
+from hwconfig.constants import DATA_DIR_NAME, get_config_data_url, get_hwconfig_home_dir
 from hwconfig.lib import (
-    get_powershell_dir,
-    ensure_dir,
-    in_wsl,
     clone_repo,
-    update_repo,
+    ensure_dir,
+    get_powershell_dir,
     get_windows_terminal_settings_file,
+    in_wsl,
+    update_repo,
 )
-from hwconfig.constants import get_hwconfig_home_dir, get_config_data_url
 
 Installer = Callable[..., str]
 
+# TODO: Installer error reporting and checks
+
 
 def get_sync_config_data_dir() -> Path:
+    """Sync the config data directory and return the local path to it.
+
+    Returns:
+        The path to the config data directory.
+    """
     data_url = get_config_data_url()
-    data_repo_name = data_url.rsplit("/", maxsplit=-1)[-1].split(".")[0]
+
     hwconfig_home_dir = get_hwconfig_home_dir()
-    hwconfig_data_dir = hwconfig_home_dir / data_repo_name
+    hwconfig_data_dir = hwconfig_home_dir / DATA_DIR_NAME
 
     if not hwconfig_home_dir.exists():
         hwconfig_home_dir.mkdir(parents=True)
 
     if not hwconfig_data_dir.exists():
-        clone_repo(src_url=data_url, dst_dir=hwconfig_home_dir)
+        clone_repo(
+            src_url=data_url, dst_dir=hwconfig_home_dir, repo_dir_name=DATA_DIR_NAME
+        )
     else:
         update_repo(repo_dir=hwconfig_data_dir)
 
@@ -36,6 +45,9 @@ def get_sync_config_data_dir() -> Path:
 
 def install_powershell_config(data_dir: Path) -> str:
     """Install PowerShell config by copying the PowerShell config directory.
+
+    Args:
+        data_dir: Path to the directory containing the config source data.
 
     Returns:
         A string saying the config was installed and to which directory.
@@ -58,6 +70,10 @@ def copy_terminal_settings(source_file: Path, destination_file: Path) -> None:
     Windows terminal has additional settings like WSL profiles that are difficult to
     share between systems and that we would not want to override by just replacing the
     file, like with the other config files.
+
+    Args:
+        source_file: The file containing the settings to copy.
+        destination_file: The file to copy the settings to.
     """
     # load source and destination data
     with open(source_file, encoding="utf-8") as file:
@@ -99,6 +115,9 @@ def install_windows_terminal_config(data_dir: Path) -> str:
     Does not overwrite the entire file, but inserts overrides on theme and appearance
     in the user config, so local path settings etc are not lost.
 
+    Args:
+        data_dir: Path to the directory containing the config source data.
+
     Returns:
         A string saying the config was installed and to which file.
     """
@@ -115,6 +134,9 @@ def install_windows_terminal_config(data_dir: Path) -> str:
 def install_fish_config(data_dir: Path) -> str:
     """Install Fish config by copying the contents of the Fish config directory.
 
+    Args:
+        data_dir: Path to the directory containing the config source data.
+
     Returns:
         A string saying the config was installed and to which directory.
     """
@@ -128,6 +150,9 @@ def install_alacritty_config(data_dir: Path) -> str:
     """
     Install Alacritty config by copying the contents of the Alacritty config directory.
 
+    Args:
+        data_dir: Path to the directory containing the config source data.
+
     Returns:
         A string saying the config was installed and to which directory.
     """
@@ -139,6 +164,9 @@ def install_alacritty_config(data_dir: Path) -> str:
 
 def install_hyper_config(data_dir: Path) -> str:
     """Install Hyper config by copying the contents of the Hyper config directory.
+
+    Args:
+        data_dir: Path to the directory containing the config source data.
 
     Returns:
         A string saying the config was installed and to which directory.
