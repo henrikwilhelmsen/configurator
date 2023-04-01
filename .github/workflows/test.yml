@@ -22,4 +22,4 @@ jobs:
         run: pipenv run pytest test
 
       - name: Run hwconfig install
-        run: hwconfig install
+        run: pipenv run hwconfig install
