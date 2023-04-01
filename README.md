@@ -11,13 +11,13 @@ The cli app requires Python and [pipx](https://pypa.github.io/pipx/), which can 
 ### Install Windows dependencies
 
 ```PowerShell
-Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/henrikwilhelmsen/hw-config-cli/scripts/bootstrap.ps1" -OutFile "./bootstrap.ps1"; &"./bootstrap.ps1"
+Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/henrikwilhelmsen/hw-config-cli/main/scripts/bootstrap.ps1" -OutFile "./bootstrap.ps1"; &"./bootstrap.ps1"
 ```
 
 ### Install Ubuntu dependencies
 
 ```shell
-curl -s https://raw.githubusercontent.com/henrikwilhelmsen/hw-config-cli/scripts/bootstrap.sh | bash
+curl -s https://raw.githubusercontent.com/henrikwilhelmsen/hw-config-cli/main/scripts/bootstrap.sh | bash
 ```
 
 ### CLI and Config Installation
