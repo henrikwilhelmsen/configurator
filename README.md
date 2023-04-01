@@ -6,27 +6,29 @@ Config files located in [hw-config-data](https://github.com/henrikwilhelmsen/hw-
 
 ## Installation
 
+The cli app requires Python and [pipx](https://pypa.github.io/pipx/), which can be installed manually or with the platform specific bootstrap scripts as described below.
+
 ### Install Windows dependencies
 
 ```PowerShell
-Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/henrikwilhelmsen/hw-config-cli/dev/split-data-cli/scripts/bootstrap.ps1" -OutFile "./bootstrap.ps1"; &"./bootstrap.ps1"
+Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/henrikwilhelmsen/hw-config-cli/scripts/bootstrap.ps1" -OutFile "./bootstrap.ps1"; &"./bootstrap.ps1"
 ```
 
 ### Install Ubuntu dependencies
 
 ```shell
-curl -s https://raw.githubusercontent.com/henrikwilhelmsen/hw-config-cli/dev/split-data-cli/scripts/bootstrap.sh | bash
+curl -s https://raw.githubusercontent.com/henrikwilhelmsen/hw-config-cli/scripts/bootstrap.sh | bash
 ```
 
-### Config Setup
+### CLI and Config Installation
 
 Install the hwconfig cli with pipx:
 
 ```shell
-pipx install git+https://github.com/henrikwilhelmsen/hw-config-cli.git@dev/split-data-cli
+pipx install git+https://github.com/henrikwilhelmsen/hw-config-cli.git
 ```
 
-Install the configs:
+Install the config files with the cli:
 
 ```shell
 hwconfig install
