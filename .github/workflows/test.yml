@@ -1,0 +1,25 @@
+name: test
+
+on: [push]
+
+jobs:
+  test-python:
+    name: test-python
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Python, pipenv and Pipfile packages
+        uses: palewire/install-python-pipenv-pipfile@v3
+        with:
+          python-version: "3.11"
+
+      - name: Analyze code with pylint
+        run: pipenv run pylint src test
+
+      - name: Run Pytest
+        run: pipenv run pytest test
+
+      - name: Run hwconfig install
+        run: pipenv run hwconfig install
