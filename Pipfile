@@ -10,6 +10,8 @@ python_version = "3.11"
 click = "*"
 
 [dev-packages]
+black = "*"
+isort = "*"
 pytest = "*"
 mypy = "*"
 debugpy = "*"
