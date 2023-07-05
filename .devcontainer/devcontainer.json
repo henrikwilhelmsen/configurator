@@ -6,6 +6,7 @@
         "dockerfile": "Dockerfile",
         "context": ".."
     },
+    "postCreateCommand": "pipenv sync --dev",
     "customizations": {
         "vscode": {
             "settings": {
@@ -26,7 +27,8 @@
                 "isort.args": [
                     "--profile",
                     "black"
-                ]
+                ],
+                "ruff.enable": true
             },
             "extensions": [
                 "ms-python.python",
@@ -34,16 +36,18 @@
                 "VisualStudioExptTeam.vscodeintellicode",
                 "VisualStudioExptTeam.intellicode-api-usage-examples",
                 "njpwerner.autodocstring",
+                "aaron-bond.better-comments",
                 "streetsidesoftware.code-spell-checker",
                 "bmalehorn.vscode-fish",
                 "foxundermoon.shell-format",
                 "timonwong.shellcheck",
-                "Gruntfuggly.todo-tree",
                 "eamodio.gitlens",
                 "monokai.theme-monokai-pro-vscode",
                 "vscode-icons-team.vscode-icons",
                 "GitHub.vscode-github-actions",
-                "ms-azuretools.vscode-docker"
+                "ms-azuretools.vscode-docker",
+                "charliermarsh.ruff",
+                "tamasfe.even-better-toml"
             ]
         }
     }

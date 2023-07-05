@@ -16,3 +16,11 @@ hwconfig = "hwconfig.cli:hwconfig"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.ruff]
+line-length = 88
+src = ["src"]
+select = ["ALL"]
+
+[tool.ruff.pydocstyle]
+convention = "google"

@@ -15,5 +15,5 @@ isort = "*"
 pytest = "*"
 mypy = "*"
 debugpy = "*"
-pylint = "*"
+ruff = "*"
 hwconfig = {editable = true, path = "."}
