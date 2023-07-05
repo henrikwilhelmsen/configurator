@@ -64,10 +64,10 @@ def ensure_dir(directory: Path) -> Path:
 
 
 def get_powershell_dir() -> Union[Path, None]:
-    """Get the PowerShell user directory located in <user_paths>/Documents/PowerShell
+    """Get the PowerShell user directory located in <user_paths>/Documents/PowerShell.
 
     Returns:
-        The path to the PowerShell directory as a Path object if it exists, else None.
+        The path to the PowerShell directory if it exists, else None.
     """
     try:
         documents_dir = check_output(
@@ -90,7 +90,7 @@ def get_powershell_dir() -> Union[Path, None]:
 
 
 def get_windows_terminal_settings_file() -> Union[Path, None]:
-    """Get the path to the Windows Terminal settings.json file, if it exists
+    """Get the path to the Windows Terminal settings.json file, if it exists.
 
     Returns:
         The path to the settings file if it exists, None if not.
@@ -99,7 +99,9 @@ def get_windows_terminal_settings_file() -> Union[Path, None]:
         "AppData",
         "Local",
         "Packages",
+        # cSpell:disable noqa: ERA001
         "Microsoft.WindowsTerminal_8wekyb3d8bbwe",
+        # cSpell:enable noqa: ERA001
         "LocalState",
         "settings.json",
     )

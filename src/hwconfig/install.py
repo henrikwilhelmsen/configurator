@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 import json
 import platform
+from collections.abc import Callable, Generator
 from pathlib import Path
 from shutil import copytree
-from typing import Callable, Generator, List
 
 from hwconfig.constants import DATA_DIR_NAME, get_config_data_url, get_hwconfig_home_dir
 from hwconfig.lib import (
@@ -35,7 +37,7 @@ def get_sync_config_data_dir() -> Path:
 
     if not hwconfig_data_dir.exists():
         clone_repo(
-            src_url=data_url, dst_dir=hwconfig_home_dir, repo_dir_name=DATA_DIR_NAME
+            src_url=data_url, dst_dir=hwconfig_home_dir, repo_dir_name=DATA_DIR_NAME,
         )
     else:
         update_repo(repo_dir=hwconfig_data_dir)
@@ -63,9 +65,7 @@ def install_powershell_config(data_dir: Path) -> str:
 
 
 def copy_terminal_settings(source_file: Path, destination_file: Path) -> None:
-    """
-    Copy the default profile settings, application settings and schemes from source json
-    to the destination json file.
+    """Copy the default profile settings, application settings and schemes.
 
     Windows terminal has additional settings like WSL profiles that are difficult to
     share between systems and that we would not want to override by just replacing the
@@ -76,9 +76,9 @@ def copy_terminal_settings(source_file: Path, destination_file: Path) -> None:
         destination_file: The file to copy the settings to.
     """
     # load source and destination data
-    with open(source_file, encoding="utf-8") as file:
+    with source_file.open() as file:
         source_data = json.load(file)
-    with open(destination_file, encoding="utf-8") as file:
+    with destination_file.open() as file:
         destination_data = json.load(file)
 
     # update default settings
@@ -105,7 +105,7 @@ def copy_terminal_settings(source_file: Path, destination_file: Path) -> None:
         destination_data[key] = value
 
     # write to destination file
-    with open(destination_file, "w", encoding="utf-8") as file:
+    with destination_file.open("w", encoding="utf-8") as file:
         json.dump(destination_data, file)
 
 
@@ -119,7 +119,7 @@ def install_windows_terminal_config(data_dir: Path) -> str:
         data_dir: Path to the directory containing the config source data.
 
     Returns:
-        A string saying the config was installed and to which file.
+        Result of the installation.
     """
     source_config = data_dir / "terminal" / "settings.json"
     target_config = get_windows_terminal_settings_file()
@@ -131,6 +131,7 @@ def install_windows_terminal_config(data_dir: Path) -> str:
     return f"windows terminal config installed ({target_config})"
 
 
+# TODO: Generalized implementation, copying code for all the basic installers atm.
 def install_fish_config(data_dir: Path) -> str:
     """Install Fish config by copying the contents of the Fish config directory.
 
@@ -147,14 +148,13 @@ def install_fish_config(data_dir: Path) -> str:
 
 
 def install_alacritty_config(data_dir: Path) -> str:
-    """
-    Install Alacritty config by copying the contents of the Alacritty config directory.
+    """Install Alacritty config by copying.
 
     Args:
         data_dir: Path to the directory containing the config source data.
 
     Returns:
-        A string saying the config was installed and to which directory.
+        The result of the installation process.
     """
     source_dir = data_dir / "alacritty"
     target_dir = ensure_dir(Path.home().joinpath(".config/alacritty"))
@@ -163,7 +163,7 @@ def install_alacritty_config(data_dir: Path) -> str:
 
 
 def install_hyper_config(data_dir: Path) -> str:
-    """Install Hyper config by copying the contents of the Hyper config directory.
+    """Install Hyper config by copying.
 
     Args:
         data_dir: Path to the directory containing the config source data.
@@ -177,7 +177,7 @@ def install_hyper_config(data_dir: Path) -> str:
     return f"Hyper config installed ({target_dir})"
 
 
-def get_linux_installers() -> List[Installer]:
+def get_linux_installers() -> list[Installer]:
     """Get Linux installers.
 
     Returns:
@@ -191,7 +191,7 @@ def get_linux_installers() -> List[Installer]:
     return installers
 
 
-def get_windows_installers() -> List[Installer]:
+def get_windows_installers() -> list[Installer]:
     """Get Windows installers.
 
     Returns:
@@ -201,10 +201,10 @@ def get_windows_installers() -> List[Installer]:
 
 
 def get_installers() -> Generator[Installer, None, None]:
-    """Gets the installers for the current platform. (Windows or Linux)
+    """Gets the installers for the current platform (Windows or Linux).
 
     Raises:
-        NotImplementedError: If the current platform is not supported.
+        NotImplementedError: If current platform does not have installers implemented.
 
     Yields:
         Every config installer for the current platform.
@@ -216,4 +216,4 @@ def get_installers() -> Generator[Installer, None, None]:
         for installer in get_windows_installers():
             yield installer
     else:
-        raise NotImplementedError(f"No config installers found for {platform.system()}")
+        raise NotImplementedError
