@@ -1,7 +1,8 @@
 """Module for the hwconfig CLI."""
+# TODO: style echo based on command result (OK = green, WARNING = orange, ERROR = red)
 import click
 
-from hwconfig.install import get_installers, get_sync_config_data_dir
+from hwconfig import main
 
 
 @click.group()
@@ -12,18 +13,17 @@ def hwconfig() -> None:
 @hwconfig.command()
 def install() -> None:
     """Sync and install config files."""
-    click.echo("Installing config files...")
-
-    config_data_dir = get_sync_config_data_dir()
-
-    for installer in get_installers():
-        result = installer(config_data_dir)
-        click.echo(click.style(result, fg="green"))
-
-    click.echo("Config files installed!")
+    click.echo(main.install().msg)
 
 
 @hwconfig.command()
 def uninstall() -> None:
     """Uninstall configuration files and revert to the state prior to installation."""
-    click.echo("Uninstall not implemented yet!")
+    click.echo(main.uninstall().msg)
+
+
+@hwconfig.command()
+@click.argument("url")
+def set_data_url(url: str) -> None:
+    """Uninstall configuration files and revert to the state prior to installation."""
+    click.echo(main.set_data_url(url).msg)

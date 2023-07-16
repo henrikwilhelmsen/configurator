@@ -1,25 +1,62 @@
-import platform
+from __future__ import annotations
+
+import json
+import os
 from pathlib import Path
 from subprocess import CalledProcessError, check_call, check_output
-from typing import Union
+
+from hwconfig.config import DataConfig
+from hwconfig.platform import in_windows
 
 
-def in_wsl() -> bool:
-    """Check if we are running in a WSL instance.
+def ensure_dir(directory: Path) -> Path:
+    """Create the given directory if it does not already exist.
 
-    Returns:
-        True if running in a WSL instance, False if not.
-    """
-    return "microsoft-standard" in platform.uname().release
-
-
-def in_windows() -> bool:
-    """Check if the current platform is Windows.
+    Args:
+        directory: The directory to create.
 
     Returns:
-        True if current platform is Windows, else False.
+        The path of the created directory.
     """
-    return platform.system() == "Windows"
+    if not directory.exists():
+        directory.mkdir(parents=True)
+
+    return directory
+
+
+def get_home_dir() -> Path:
+    """Get the path to the hwconfig home directory."""
+    env_var = os.getenv("HWCONFIG_HOME")
+
+    if env_var:
+        return Path(env_var)
+
+    return Path.home() / ".hwconfig"
+
+
+def get_data_dir() -> Path:
+    """Get the path to the hwconfig data directory."""
+    return get_home_dir().joinpath("data")
+
+
+# TODO: Raise error if data url has not been set or is invalid.
+def get_data_url() -> str:
+    return NotImplemented
+
+
+# TODO: use "git ls-remote" to test access to repo as validation before writing to file.
+def set_data_url() -> None:
+    raise NotImplementedError
+
+
+# TODO Ensure data dir exists and repo is synced?
+def get_data_config() -> DataConfig:
+    config_file = get_data_dir().joinpath("hwconfig.json")
+
+    with config_file.open() as f:
+        data = json.load(f)
+
+    return DataConfig(**data)
 
 
 def clone_repo(src_url: str, dst_dir: Path, repo_dir_name: str = "") -> None:
@@ -48,22 +85,22 @@ def update_repo(repo_dir: Path) -> None:
     check_call(args=args, cwd=repo_dir, shell=in_windows())
 
 
-def ensure_dir(directory: Path) -> Path:
-    """Create the given directory if it does not already exist.
+def sync_config_data() -> None:
+    """Sync the config data directory and return the local path to it."""
+    data_dir = get_data_dir()
 
-    Args:
-        directory: The directory to create.
+    if not data_dir.exists():
+        ensure_dir(data_dir.parent)
+        clone_repo(
+            src_url=get_data_url(),
+            dst_dir=data_dir.parent,
+            repo_dir_name=data_dir.name,
+        )
+    else:
+        update_repo(repo_dir=data_dir)
 
-    Returns:
-        The path of the created directory.
-    """
-    if not directory.exists():
-        directory.mkdir(parents=True)
 
-    return directory
-
-
-def get_powershell_dir() -> Union[Path, None]:
+def get_powershell_dir() -> Path | None:
     """Get the PowerShell user directory located in <user_paths>/Documents/PowerShell.
 
     Returns:
@@ -76,20 +113,17 @@ def get_powershell_dir() -> Union[Path, None]:
             shell=True,
         ).splitlines()[0]
 
-    except CalledProcessError as err:
-        print(f"Unable to locate documents folder ({err})")
+    except CalledProcessError:
         return None
 
     powershell_dir = Path(documents_dir) / "PowerShell"
-
     if powershell_dir.exists():
         return powershell_dir
 
-    print(f"No PowerShell directory in documents folder ({documents_dir}")
     return None
 
 
-def get_windows_terminal_settings_file() -> Union[Path, None]:
+def get_windows_terminal_settings_file() -> Path | None:
     """Get the path to the Windows Terminal settings.json file, if it exists.
 
     Returns:

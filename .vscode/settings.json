@@ -1,6 +1,29 @@
 {
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": true
+        }
+    },
+    "isort.args": [
+        "--profile",
+        "black"
+    ],
+    "python.analysis.typeCheckingMode": "basic",
+    "python.formatting.provider": "black",
+    "python.linting.mypyEnabled": true,
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
+    "python.testing.pytestArgs": [
+        "test"
+    ],
+    "ruff.enable": true,
     "cSpell.words": [
         "Alacritty",
-        "hwconfig"
-    ]
+        "hwconfig",
+        "monokai",
+        "pydantic",
+        "setenv"
+    ],
 }

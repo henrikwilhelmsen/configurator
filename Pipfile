@@ -5,12 +5,10 @@ name = "pypi"
 
 [packages]
 click = "*"
+pydantic = "*"
 
 [dev-packages]
-black = "*"
-isort = "*"
 pytest = "*"
-mypy = "*"
 debugpy = "*"
-ruff = "*"
 hwconfig = {editable = true, path = "."}
+pydantic = "*"

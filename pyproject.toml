@@ -21,7 +21,7 @@ where = ["src"]
 line-length = 88
 src = ["src"]
 select = ["ALL"]
-ignore = ["TD002", "TD003"]
+ignore = ["TD002", "TD003", "ANN101"]
 target-version = "py37"
 
 [tool.ruff.pydocstyle]
