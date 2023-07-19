@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 
 from hwconfig.install import copy_terminal_settings
-from hwconfig.lib import get_sync_config_data_dir
+from hwconfig.io import get_data_dir, sync_config_data
 
 
 @pytest.fixture(name="setup_files")
@@ -22,7 +22,8 @@ def fixture_setup_files(
         A tuple with the path to the settings source and destination files.
     """
     monkeypatch.setenv("HWCONFIG_HOME", tmp_path.as_posix())
-    config_data_dir = get_sync_config_data_dir()
+    config_data_dir = get_data_dir()
+    sync_config_data()
     source_file = config_data_dir / "terminal" / "settings.json"
     test_data_file = Path(__file__).parent / "test_data" / "terminal_settings.json"
 

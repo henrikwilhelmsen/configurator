@@ -12,3 +12,4 @@ pytest = "*"
 debugpy = "*"
 hwconfig = {editable = true, path = "."}
 pydantic = "*"
+pytest-depends = "*"

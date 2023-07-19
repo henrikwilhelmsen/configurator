@@ -17,12 +17,18 @@ hwconfig = "hwconfig.cli:hwconfig"
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+hwconfig = ["py.typed"]
+
 [tool.ruff]
-line-length = 88
+line-length = 120
 src = ["src"]
 select = ["ALL"]
-ignore = ["TD002", "TD003", "ANN101"]
+ignore = ["TD002", "TD003", "ANN101", "S101"]
 target-version = "py37"
 
 [tool.ruff.pydocstyle]
 convention = "google"
+
+[tool.black]
+line-length = 120

@@ -1,3 +1,4 @@
+"""Platform related utility functions."""
 import platform
 
 

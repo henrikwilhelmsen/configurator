@@ -1,3 +1,4 @@
+"""Module containing various IO related functions."""
 from __future__ import annotations
 
 import json
@@ -36,7 +37,22 @@ def get_home_dir() -> Path:
 
 def get_data_dir() -> Path:
     """Get the path to the hwconfig data directory."""
+    env_var = os.getenv("HWCONFIG_DATA")
+
+    if env_var:
+        return Path(env_var)
+
     return get_home_dir().joinpath("data")
+
+
+def get_backup_dir() -> Path:
+    """Get the path to the hwconfig backup directory."""
+    env_var = os.getenv("HWCONFIG_BACKUP")
+
+    if env_var:
+        return Path(env_var)
+
+    return get_home_dir().joinpath("backup")
 
 
 # TODO: Raise error if data url has not been set or is invalid.
