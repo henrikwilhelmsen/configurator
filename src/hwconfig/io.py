@@ -55,18 +55,18 @@ def get_backup_dir() -> Path:
     return get_home_dir().joinpath("backup")
 
 
-# TODO: Raise error if data url has not been set or is invalid.
 def get_data_url() -> str:
+    # TODO: Raise error if data url has not been set or is invalid.
     return NotImplemented
 
 
-# TODO: use "git ls-remote" to test access to repo as validation before writing to file.
 def set_data_url() -> None:
+    # TODO: use "git ls-remote" to test access to repo as validation before writing to file.
     raise NotImplementedError
 
 
-# TODO Ensure data dir exists and repo is synced?
 def get_data_config() -> DataConfig:
+    # TODO Ensure data dir exists and repo is synced?
     config_file = get_data_dir().joinpath("hwconfig.json")
 
     with config_file.open() as f:

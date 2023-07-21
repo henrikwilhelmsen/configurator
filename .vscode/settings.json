@@ -32,6 +32,7 @@
         "monkeypatched",
         "monokai",
         "pydantic",
-        "setenv"
+        "setenv",
+        "winterm"
     ],
 }
