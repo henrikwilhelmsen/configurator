@@ -21,7 +21,7 @@ def class_fixture_monkeypatch() -> pytest.MonkeyPatch:
 @pytest.fixture(name="test_source_dir", scope="class")
 def fixture_test_source_dir() -> Path:
     """Fixture containing the path to the test data directory.."""
-    return Path(__file__).parent.joinpath("test_data")
+    return Path(__file__).parent / "test_data" / "copy_dir"
 
 
 @pytest.fixture(name="test_target_dir", scope="class")

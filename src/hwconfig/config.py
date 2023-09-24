@@ -13,6 +13,7 @@ class InstallerConfig(BaseModel):
 
     # TODO: Custom validation for installer and platform
     # TODO: Can source and target be Path objects?
+    # TODO: Generate schema from model
 
     name: str
     platform: str
