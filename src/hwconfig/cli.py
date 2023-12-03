@@ -1,8 +1,5 @@
 """Module for the hwconfig CLI."""
-# TODO: style echo based on command result (OK = green, WARNING = orange, ERROR = red)
 import click
-
-from hwconfig import main
 
 
 @click.group()
@@ -13,17 +10,25 @@ def hwconfig() -> None:
 @hwconfig.command()
 def install() -> None:
     """Sync and install config files."""
-    click.echo(main.install().msg)
+    # Check if config exists, if not: stop and ask user to run configure command.
+    # Get and run each installers install method from config
+    # Echo results
+    click.echo("Install command not implemented yet.")
 
 
 @hwconfig.command()
 def uninstall() -> None:
     """Uninstall configuration files and revert to the state prior to installation."""
-    click.echo(main.uninstall().msg)
+    # Check if config exists, if not stop and say nothing to uninstall
+    # Get and run each installers uninstall method from config
+    # Echo results
+    click.echo("Uninstall command not implemented yet.")
 
 
 @hwconfig.command()
-@click.argument("url")
-def set_repo(url: str) -> None:
+def configure() -> None:
     """Set the url of the config data repository."""
-    click.echo(main.set_data_url(url).msg)
+    # Create new config from user input
+    # Write config to file
+    # Echo results
+    click.echo("Configure command not implemented yet.")

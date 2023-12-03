@@ -1,3 +1,4 @@
+"""Application paths module."""
 import os
 from pathlib import Path
 
@@ -33,4 +34,5 @@ def get_backup_dir() -> Path:
 
 
 def get_data_config_file() -> Path:
+    """Get the path to the data config file."""
     return get_home_dir() / "data_config.json"

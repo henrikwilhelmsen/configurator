@@ -1,4 +1,9 @@
+from pathlib import Path
+
+from result import Err, Ok, Result
+
 from hwconfig.models import DataRepoModel
+from hwconfig.paths import get_data_dir
 
 
 class DataRepoConfig:
@@ -22,3 +27,16 @@ class DataRepoConfig:
     @manifest.setter
     def manifest(self, manifest: str) -> None:
         self.model.manifest = manifest
+
+    @property
+    def data_repo_dir(self) -> Path:
+        """Path to the local data repo directory."""
+        return get_data_dir()
+
+
+def create_config_file(config: DataRepoConfig) -> Result[DataRepoConfig, str]:
+    return NotImplemented
+
+
+def get_config_from_file() -> Result[DataRepoConfig, str]:
+    return NotImplemented
