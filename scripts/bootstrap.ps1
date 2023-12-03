@@ -1,13 +1,14 @@
 <#
 .SYNOPSIS
-    This script installs PowerShell, Windows Terminal, Python and Meslo-NF nerd-font on Windows using Winget and Scoop package managers.
+    This script installs PowerShell, Windows Terminal, Python and Meslo-NF nerd-font
+    on Windows using Winget and Scoop package managers.
 
 .PARAMETER pythonVersion
     The version of Python to install. Default is "3.11". Only supports major version numbers.
     See "winget search Python.Python" for available versions.
 
 .NOTES
-    - This script requires Winget package manager to be installed.
+    - This script requires Winget package manager.
 #>
 
 param (
@@ -74,9 +75,9 @@ function Install-Python {
     }
 
     Write-Host "Installing Python $pythonVersion..."
-        
+
     try {
-        winget install Python.Python.$pythonVersion --silent
+        winget install Python.Python.$pythonVersion --silent --force
         Write-Host "Python $pythonVersion installed!"
     }
     catch {

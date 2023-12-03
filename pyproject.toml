@@ -8,7 +8,7 @@ description = ""
 readme = "README.md"
 license = { file = "LICENSE.md" }
 classifiers = ["Programming Language :: Python :: 3"]
-dependencies = ["click"]
+dependencies = ["click", "pydantic"]
 dynamic = ["version"]
 
 [project.scripts]
@@ -26,9 +26,7 @@ src = ["src"]
 select = ["ALL"]
 ignore = ["TD002", "TD003", "ANN101", "S101"]
 target-version = "py37"
-
-[tool.ruff.pydocstyle]
-convention = "google"
+pydocstyle.convention = "google"
 
 [tool.black]
 line-length = 120

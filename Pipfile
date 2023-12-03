@@ -8,8 +8,8 @@ click = "*"
 pydantic = "*"
 
 [dev-packages]
+hwconfig = {editable = true, path = "."}
 pytest = "*"
 debugpy = "*"
-hwconfig = {editable = true, path = "."}
 pydantic = "*"
 pytest-depends = "*"

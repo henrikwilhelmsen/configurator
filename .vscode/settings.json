@@ -1,25 +1,16 @@
 {
     "[python]": {
-        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.defaultFormatter": "charliermarsh.ruff",
         "editor.formatOnSave": true,
         "editor.codeActionsOnSave": {
             "source.organizeImports": true
         }
     },
-    "isort.args": [
-        "--profile",
-        "black"
-    ],
     "editor.rulers": [
         88,
         120
     ],
     "python.analysis.typeCheckingMode": "basic",
-    "python.formatting.provider": "black",
-    "python.formatting.blackArgs": [
-        "--line-length=120"
-    ],
-    "python.linting.mypyEnabled": true,
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
     "python.testing.pytestArgs": [
@@ -28,11 +19,13 @@
     "ruff.enable": true,
     "cSpell.words": [
         "Alacritty",
+        "bbwe",
         "hwconfig",
         "monkeypatched",
         "monokai",
         "pydantic",
         "setenv",
+        "wekyb",
         "winterm"
     ],
 }

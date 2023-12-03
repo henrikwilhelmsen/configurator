@@ -24,6 +24,6 @@ def uninstall() -> None:
 
 @hwconfig.command()
 @click.argument("url")
-def set_data_url(url: str) -> None:
-    """Uninstall configuration files and revert to the state prior to installation."""
+def set_repo(url: str) -> None:
+    """Set the url of the config data repository."""
     click.echo(main.set_data_url(url).msg)
