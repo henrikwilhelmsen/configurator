@@ -1,7 +1,7 @@
 import json
 
 from hwconfig import REPO_DIR
-from hwconfig.models import RepoManifestModel
+from hwconfig.data_repo.model import RepoManifestModel
 
 
 def generate_repo_manifest_schema() -> None:

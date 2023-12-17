@@ -10,12 +10,3 @@ class InstallerModel(BaseModel):
     installer: str = Field(default_factory=str)
     source: str = Field(default_factory=str)
     target: str = Field(default_factory=str)
-
-
-class DataRepoModel(BaseModel):
-    url: str
-    manifest: str
-
-
-class RepoManifestModel(BaseModel):
-    installers: list[InstallerModel] = Field(default_factory=list)

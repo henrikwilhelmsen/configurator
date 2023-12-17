@@ -25,7 +25,7 @@ line-length = 120
 src = ["src"]
 select = ["ALL"]
 ignore = ["TD002", "TD003", "ANN101", "S101"]
-target-version = "py37"
+target-version = "py310"
 pydocstyle.convention = "google"
 
 [tool.black]

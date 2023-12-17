@@ -24,6 +24,14 @@ def fixture_test_source_dir() -> Path:
     return Path(__file__).parent / "test_data" / "copy_dir"
 
 
+@pytest.fixture(name="tmp_path_class", scope="class")
+def fixture_tmp_path_class(tmp_path_factory: pytest.TempPathFactory) -> Generator[Path, None, None]:
+    """Class scoped tmp_path fixture."""
+    tmp_dir = tmp_path_factory.mktemp(basename="tmp", numbered=True)
+    yield tmp_dir
+    rmtree(tmp_dir)
+
+
 @pytest.fixture(name="test_target_dir", scope="class")
 def fixture_test_target_dir(tmp_path_factory: pytest.TempPathFactory) -> Generator[Path, None, None]:
     """A tmp directory to use as the target for installer tests."""

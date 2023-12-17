@@ -1,4 +1,5 @@
 """Platform related utility functions."""
+import json
 import platform
 from pathlib import Path
 from subprocess import CalledProcessError, check_output
@@ -17,18 +18,26 @@ def in_windows() -> bool:
 
 
 def ensure_dir(directory: Path) -> Path:
-    """Create the given directory if it does not already exist.
-
-    Args:
-        directory: The directory to create.
-
-    Returns:
-        The path of the created directory.
-    """
     if not directory.exists():
         directory.mkdir(parents=True)
 
     return directory
+
+
+def check_file_exists(file: Path) -> Result[Path, str]:
+    if not file.exists():
+        return Err(f"File not found at {file}")
+
+    return Ok(file)
+
+
+def get_json_data_from_file(file: Path) -> Result[dict, str]:
+    """Get the JSON data from the given file path."""
+    if not file.exists():
+        return Err(f"File not found at {file}")
+
+    with file.open() as f:
+        return Ok(json.load(f))
 
 
 def get_powershell_dir() -> Result[Path, str]:

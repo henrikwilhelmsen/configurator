@@ -2,7 +2,7 @@ from pathlib import Path
 
 from result import Err, Ok, Result
 
-from hwconfig.models import DataRepoModel
+from hwconfig.data_repo.model import DataRepoModel
 from hwconfig.paths import get_data_dir
 
 
