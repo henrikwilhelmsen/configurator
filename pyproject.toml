@@ -1,24 +1,21 @@
-[build-system]
-requires = ["setuptools", "setuptools-scm"]
-build-backend = "setuptools.build_meta"
-
 [project]
 name = "hwconfig"
-description = ""
+description = "CLI application for managing config files"
+authors = [
+    { name = "Henrik Wilhelmsen", email = "contact@henrikwilhelmsen.com" },
+]
+dependencies = ["click>=8.1.7", "pydantic>=2.5.2", "result>=0.15.0"]
+requires-python = ">=3.10"
 readme = "README.md"
-license = { file = "LICENSE.md" }
-classifiers = ["Programming Language :: Python :: 3"]
-dependencies = ["click", "pydantic"]
+license = { text = "MIT" }
 dynamic = ["version"]
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
 
 [project.scripts]
 hwconfig = "hwconfig.cli:hwconfig"
-
-[tool.setuptools.packages.find]
-where = ["src"]
-
-[tool.setuptools.package-data]
-hwconfig = ["py.typed"]
 
 [tool.ruff]
 line-length = 120
@@ -28,5 +25,20 @@ ignore = ["TD002", "TD003", "ANN101", "S101"]
 target-version = "py310"
 pydocstyle.convention = "google"
 
-[tool.black]
-line-length = 120
+[tool.pytest.ini_options]
+addopts = ["--cov=hwconfig", "--cov-report=xml:cov.xml"]
+
+[tool.pdm]
+package-type = "library"
+
+[tool.pdm.build]
+includes = ["src"]
+package-dir = "src"
+source-includes = ["tests"]
+
+[tool.pdm.version]
+source = "scm"
+
+[tool.pdm.dev-dependencies]
+test = ["pytest>=7.4.3", "pytest-cov>=4.1.0"]
+lint = ["ruff>=0.1.8", "mypy>=1.7.1"]
