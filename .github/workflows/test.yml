@@ -1,25 +1,45 @@
-name: test
+name: Test
 
 on: [push]
 
 jobs:
-  test-python:
-    name: test-python
+  Lint:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Install Python, pipenv and Pipfile packages
-        uses: palewire/install-python-pipenv-pipfile@v3
+      - uses: actions/checkout@v3
+      - name: Set up PDM
+        uses: pdm-project/setup-pdm@v3
         with:
-          python-version: "3.11"
+          python-version: '3.11'
+  
+      - name: Install dependencies
+        run: |
+          pdm sync -d -G testing
+      - name: Format
+        run: |
+          pdm run -v ruff format --check src tests
+      - name: Lint
+        run: |
+          pdm run -v ruff check src tests
 
-      - name: Analyze code with pylint
-        run: pipenv run pylint src test
-
-      - name: Run Pytest
-        run: pipenv run pytest test
-
-      - name: Run hwconfig install
-        run: pipenv run hwconfig install
+  Test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        python-version: ['3.10', '3.11']
+        os: [ubuntu-latest, macOS-latest, windows-latest]
+  
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up PDM
+        uses: pdm-project/setup-pdm@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+  
+      - name: Install dependencies
+        run: |
+          pdm sync -d -G testing
+      - name: Run Tests
+        run: |
+          pdm run -v pytest tests
+  
