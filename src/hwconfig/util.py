@@ -31,7 +31,7 @@ def check_file_exists(file: Path) -> Result[Path, str]:
     return Ok(file)
 
 
-def get_json_data_from_file(file: Path) -> Result[dict, str]:
+def get_json_data_from_file(file: Path) -> Result[dict[str, str], str]:
     """Get the JSON data from the given file path."""
     if not file.exists():
         return Err(f"File not found at {file}")

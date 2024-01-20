@@ -4,11 +4,12 @@ from __future__ import annotations
 import json
 from pathlib import Path
 from shutil import copy2
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from result import Err, Ok, Result
 
 from hwconfig.installer.abstract import Installer
+from hwconfig.settings import Settings
 from hwconfig.util import check_file_exists, ensure_dir, get_json_data_from_file
 
 if TYPE_CHECKING:
@@ -18,16 +19,19 @@ if TYPE_CHECKING:
 class TerminalInstaller(Installer):
     """Installer for Windows Terminal config."""
 
-    def __init__(self, config: InstallerConfig) -> None:
+    def __init__(self, config: InstallerConfig, settings: Settings) -> None:
         """Initialize the installer with a config."""
-        super().__init__(config)
+        super().__init__(config=config, settings=settings)
 
         if not self.config.target:
             self.config.target = self._get_target_path()
 
+    def backup_dir(self) -> Path:
+        return self.settings.backup_dir / self.config.name
+
     @property
     def backup_file(self) -> Path:
-        return self.config.backup_dir / "settings.json"
+        return self.backup_dir() / "settings.json"
 
     def _ensure_source_and_target_files(self) -> Result[str, str]:
         """Ensure that the source and target paths exist and are files, not directories."""
@@ -53,7 +57,7 @@ class TerminalInstaller(Installer):
 
         return Err("Unknown error occurred")
 
-    def _get_source_and_target_json_data(self) -> Result[tuple[dict, dict], str]:
+    def _get_source_and_target_json_data(self) -> Result[tuple[dict[Any, Any], dict[Any, Any]], str]:
         """Install terminal settings by copying relevant settings from source to the terminal settings file."""
         source_data_result = get_json_data_from_file(file=self.config.source)
         destination_data_result = get_json_data_from_file(file=self.config.target)
@@ -69,7 +73,11 @@ class TerminalInstaller(Installer):
         return Err("Unknown error occurred")
 
     # TODO: Add error paths and try/except blocks
-    def _copy_source_data_to_target(self, source_data: dict, target_data: dict) -> Result[dict, str]:
+    def _copy_source_data_to_target(
+        self,
+        source_data: dict[Any, Any],
+        target_data: dict[Any, Any],
+    ) -> Result[dict[str, str], str]:
         # update default settings
         target_data["profiles"]["defaults"] = source_data["profiles"]["defaults"]
 

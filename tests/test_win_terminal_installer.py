@@ -9,8 +9,8 @@ import pytest
 from result import Result, is_err, is_ok
 
 from hwconfig.installer.config import InstallerConfig
-from hwconfig.installer.model import InstallerModel
 from hwconfig.installer.terminal import TerminalInstaller
+from hwconfig.settings import Settings
 
 
 @pytest.fixture(name="terminal_source_file", scope="class")
@@ -31,24 +31,28 @@ def fixture_terminal_target_file(tmp_path_factory: pytest.TempPathFactory) -> Pa
 class TestTerminalInstaller:
     """Tests for the Windows Terminal installer."""
 
+    @pytest.fixture(name="settings", scope="class")
+    def fixture_settings(self, tmp_path_class: Path) -> Settings:
+        return Settings(home_dir=tmp_path_class / ".hwconfig")
+
     @pytest.fixture(name="terminal_installer", scope="class")
     def fixture_terminal_installer(
         self,
         terminal_source_file: Path,
         terminal_target_file: Path,
         tmp_path_class: Path,
+        settings: Settings,
     ) -> TerminalInstaller:
         """Create and return  a Windows Terminal installer instance."""
-        model = InstallerModel(
+        config = InstallerConfig(
             name="winterm_test",
             platform="Windows",
             installer="windows_terminal",
-            source=terminal_source_file.as_posix(),
-            target=terminal_target_file.as_posix(),
+            source=terminal_source_file,
+            target=terminal_target_file,
         )
-        config = InstallerConfig(model=model)
-        config.backup_dir = tmp_path_class / "backup"
-        return TerminalInstaller(config)
+        config = InstallerConfig()
+        return TerminalInstaller(config, settings)
 
     @pytest.fixture(name="backup", scope="class")
     def fixture_backup(self, terminal_installer: TerminalInstaller) -> Result:
