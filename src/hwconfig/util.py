@@ -1,4 +1,3 @@
-"""Platform related utility functions."""
 import json
 import platform
 from pathlib import Path

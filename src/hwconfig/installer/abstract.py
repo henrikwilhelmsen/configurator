@@ -1,4 +1,3 @@
-"""Module containing the Installer base class."""
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -18,7 +17,7 @@ class Installer(ABC):
     """Installer base class."""
 
     def __init__(self, config: InstallerConfig, settings: Settings) -> None:
-        """Initialize the installer with a config."""
+        """Initialize the installer with a config and settings instance."""
         self.config: InstallerConfig = config
         self.settings: Settings = settings
 

@@ -7,7 +7,7 @@ from shutil import rmtree
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from typing import Generator
+    from collections.abc import Generator
 
 import pytest
 

@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from result import Err, Ok, Result
+from result import Result
 
 from hwconfig.data_repo.model import DataRepoModel
 from hwconfig.paths import get_data_dir
@@ -34,7 +34,7 @@ class DataRepoConfig:
         return get_data_dir()
 
 
-def create_config_file(config: DataRepoConfig) -> Result[DataRepoConfig, str]:
+def create_config_file(_: DataRepoConfig) -> Result[DataRepoConfig, str]:
     return NotImplemented
 
 

@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from pydantic import BaseModel, Field
 
-from hwconfig.installer.model import InstallerModel
+if TYPE_CHECKING:
+    from hwconfig.installer.config import InstallerConfig
 
 
 class DataRepoModel(BaseModel):
@@ -11,4 +14,4 @@ class DataRepoModel(BaseModel):
 
 
 class RepoManifestModel(BaseModel):
-    installers: list[InstallerModel] = Field(default_factory=list)
+    installers: list[InstallerConfig] = Field(default_factory=list)

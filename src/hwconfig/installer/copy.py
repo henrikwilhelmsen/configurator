@@ -1,4 +1,3 @@
-"""Module containing the CopyInstaller implementation."""
 from pathlib import Path
 from shutil import copytree, rmtree
 
@@ -14,11 +13,9 @@ class CopyInstaller(Installer):
     """Installer for config files that only need to be copied to a target location."""
 
     def __init__(self, config: InstallerConfig, settings: Settings) -> None:
-        """Initialize copy installer with a config."""
         super().__init__(config=config, settings=settings)
 
     def backup_dir(self) -> Path:
-        """Get the path to the installer specific backup directory."""
         return self.settings.backup_dir / self.config.name
 
     def install(self) -> Result[str, str]:

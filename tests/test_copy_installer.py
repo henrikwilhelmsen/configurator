@@ -52,7 +52,7 @@ class TestCopyInstaller:
         return copy_installer.install()
 
     @pytest.fixture(name="uninstall", scope="class")
-    def fixture_uninstall(self, install: Result[str, str], copy_installer: CopyInstaller) -> Result[str, str]:
+    def fixture_uninstall(self, install: Result[str, str], copy_installer: CopyInstaller) -> Result[str, str]:  # noqa: ARG002
         """Run the installer uninstall method and return the installer and result."""
         return copy_installer.uninstall()
 

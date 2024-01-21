@@ -6,6 +6,8 @@ from pydantic import BaseModel, Field
 
 
 # TODO: Validate installer and platform
+# TODO: Solution for target paths that need to be computed
+# TODO: Field documentation
 class InstallerConfig(BaseModel):
     name: str = Field(default_factory=str)
     platform: str = Field(default_factory=str)

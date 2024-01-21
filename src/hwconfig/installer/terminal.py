@@ -1,4 +1,3 @@
-"""Module containing the TerminalInstaller implementation."""
 from __future__ import annotations
 
 import json
@@ -17,10 +16,16 @@ if TYPE_CHECKING:
 
 
 class TerminalInstaller(Installer):
-    """Installer for Windows Terminal config."""
+    """Installer for Windows Terminal config.
+
+    Windows Terminal has a lot of settings that are system specific, and all of them are in a single file.
+    Therefore only the settings that we would like to have shared are stored in the source files, and then written
+    to the target config without removing or affecting any other settings.
+
+    If no target file is specified, the default Terminal settings file is used.
+    """
 
     def __init__(self, config: InstallerConfig, settings: Settings) -> None:
-        """Initialize the installer with a config."""
         super().__init__(config=config, settings=settings)
 
         if not self.config.target:
@@ -35,6 +40,12 @@ class TerminalInstaller(Installer):
 
     def _ensure_source_and_target_files(self) -> Result[str, str]:
         """Ensure that the source and target paths exist and are files, not directories."""
+        if not self.config.target.exists():
+            self.config.target = self._get_target_path()
+
+        if not self.config.target.exists():
+            return Err("Unable to locate a target config file.")
+
         if self.config.source.is_dir():
             source_result = check_file_exists(self.config.source / "settings.json")
         else:
@@ -72,7 +83,7 @@ class TerminalInstaller(Installer):
 
         return Err("Unknown error occurred")
 
-    # TODO: Add error paths and try/except blocks
+    # TODO: Add error paths
     def _copy_source_data_to_target(
         self,
         source_data: dict[Any, Any],
@@ -108,7 +119,7 @@ class TerminalInstaller(Installer):
             return Ok(f"Updated {self.config.name} config file")
 
     # TODO: Break this method up into smaller methods
-    def install(self) -> Result[str, str]:
+    def install(self) -> Result[str, str]:  # noqa: PLR0911
         """Install terminal settings by copying relevant settings from source to the terminal settings file."""
         if not self.backup_file.exists():
             backup_result = self.backup()
