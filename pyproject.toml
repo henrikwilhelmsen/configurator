@@ -26,7 +26,19 @@ hwconfig = "hwconfig.cli:hwconfig"
 line-length = 120
 src = ["src"]
 select = ["ALL"]
-ignore = ["TD002", "TD003", "ANN101", "S101", "FIX002"]
+ignore = [
+    "TD002",
+    "TD003",
+    "ANN101",
+    "S101",
+    "FIX002",
+    "D100",   # Documentation
+    "D101",
+    "D102",
+    "D103",
+    "D104",
+    "D107",
+]
 target-version = "py310"
 pydocstyle.convention = "google"
 
@@ -34,7 +46,7 @@ pydocstyle.convention = "google"
 addopts = ["--cov=hwconfig", "--cov-report=xml:cov.xml"]
 
 [tool.pdm]
-package-type = "library"
+distribution = "true"
 
 [tool.pdm.build]
 includes = ["src"]
@@ -46,6 +58,4 @@ source = "scm"
 
 [tool.pdm.dev-dependencies]
 test = ["pytest>=7.4.3", "pytest-cov>=4.1.0"]
-lint = [
-    "ruff>=0.1.8",
-]
+lint = ["ruff>=0.1.8"]
