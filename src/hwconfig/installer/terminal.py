@@ -9,11 +9,11 @@ from typing import TYPE_CHECKING, Any
 from result import Err, Ok, Result
 
 from hwconfig.installer.abstract import Installer
-from hwconfig.settings import Settings
 from hwconfig.util import check_file_exists, ensure_dir, get_json_data_from_file
 
 if TYPE_CHECKING:
     from hwconfig.installer.config import InstallerConfig
+    from hwconfig.settings import Settings
 
 
 class TerminalInstaller(Installer):
@@ -82,8 +82,8 @@ class TerminalInstaller(Installer):
         target_data["profiles"]["defaults"] = source_data["profiles"]["defaults"]
 
         # update schemes, only add/override schemes found in source data
-        source_schemes: list[dict] = source_data["schemes"]
-        destination_schemes: list[dict] = target_data["schemes"]
+        source_schemes: list[dict[Any, Any]] = source_data["schemes"]
+        destination_schemes: list[dict[Any, Any]] = target_data["schemes"]
         source_scheme_names = [x["name"] for x in source_schemes]
 
         # remove any destination scheme that exists in source schemes
@@ -96,13 +96,13 @@ class TerminalInstaller(Installer):
         target_data["schemes"] = destination_schemes
 
         # update application settings, not nested in destination only source
-        source_application_data: dict = source_data["application"]
+        source_application_data: dict[Any, Any] = source_data["application"]
         for key, value in source_application_data.items():
             target_data[key] = value
 
         return Ok(target_data)
 
-    def _write_target_data_to_file(self, target_data: dict) -> Result[str, str]:
+    def _write_target_data_to_file(self, target_data: dict[Any, Any]) -> Result[str, str]:
         with self.config.target.open("w", encoding="utf-8") as file:
             json.dump(target_data, file)
             return Ok(f"Updated {self.config.name} config file")
@@ -145,14 +145,14 @@ class TerminalInstaller(Installer):
 
         return Err("Unknown error occurred")
 
-    def uninstall(self) -> Result:
+    def uninstall(self) -> Result[str, str]:
         """Uninstall the config file by deleting it and restoring the backup."""
         ensure_files_result = self._ensure_source_and_target_files()
 
         if ensure_files_result.is_err():
             return ensure_files_result
 
-        if not self.config.backup_dir.exists():
+        if not self.backup_dir().exists():
             return Err(f"{self.config.name} backup does not exist, nothing to revert to.")
 
         self.config.target.unlink()
@@ -160,9 +160,9 @@ class TerminalInstaller(Installer):
 
         return Ok(f"Uninstalled {self.config.name} config file and restored backup.")
 
-    def backup(self) -> Result:
+    def backup(self) -> Result[str, str]:
         """Back up the target file to the backup directory."""
-        ensure_dir(self.config.backup_dir)
+        ensure_dir(self.backup_dir())
         copy2(self.config.target, self.backup_file)
 
         return Ok(f"Created backup of {self.config.name} config file")
