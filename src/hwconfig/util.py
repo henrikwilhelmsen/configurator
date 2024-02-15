@@ -16,6 +16,11 @@ def in_windows() -> bool:
     return platform.system() == "Windows"
 
 
+def in_linux() -> bool:
+    """Check if the current platform is Windows."""
+    return platform.system() == "Linux"
+
+
 def ensure_dir(directory: Path) -> Path:
     if not directory.exists():
         directory.mkdir(parents=True)
@@ -35,8 +40,11 @@ def get_json_data_from_file(file: Path) -> Result[dict[str, str], str]:
     if not file.exists():
         return Err(f"File not found at {file}")
 
-    with file.open() as f:
-        return Ok(json.load(f))
+    try:
+        with file.open(mode="r") as f:
+            return Ok(json.load(f))
+    except PermissionError as e:
+        return Err(str(e))
 
 
 def get_powershell_dir() -> Result[Path, str]:
@@ -57,3 +65,14 @@ def get_powershell_dir() -> Result[Path, str]:
         return Ok(powershell_dir)
 
     return Err("Powershell directory does not exist.")
+
+
+def get_win_terminal_config() -> Path:
+    return Path.home().joinpath(
+        "AppData",
+        "Local",
+        "Packages",
+        "Microsoft.WindowsTerminal_8wekyb3d8bbwe",
+        "LocalState",
+        "settings.json",
+    )

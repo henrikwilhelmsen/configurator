@@ -1,29 +1,28 @@
+from functools import lru_cache
 from pathlib import Path
 
-from pydantic import Field, computed_field
+from pydantic import computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-def get_home_dir() -> Path:
-    """Get the path to the default hwconfig home directory."""
-    return Path.home() / ".hwconfig"
-
-
-class Settings(BaseSettings):
+class _Settings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="HWCONFIG_")
-    home_dir: Path = Field(default=get_home_dir())
+    data_repo_url: str = "https://github.com/henrikwilhelmsen/hw-config-data.git"
 
     @computed_field
     @property
-    def data_dir(self) -> Path:
-        return self.home_dir / "data"
+    def root_dir(self) -> Path:
+        return Path().home() / ".hwconfig"
 
     @computed_field
     @property
-    def backup_dir(self) -> Path:
-        return self.home_dir / "backup"
+    def data_repo_dir(self) -> Path:
+        return self.root_dir / "data_repo"
 
-    @computed_field
-    @property
-    def data_config_file(self) -> Path:
-        return self.home_dir / "data_config.json"
+
+Settings = _Settings
+
+
+@lru_cache(maxsize=1)
+def get_settings() -> Settings:
+    return _Settings()

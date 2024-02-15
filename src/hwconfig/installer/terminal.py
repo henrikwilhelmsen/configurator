@@ -1,76 +1,50 @@
 from __future__ import annotations
 
 import json
-from pathlib import Path
-from shutil import copy2
 from typing import TYPE_CHECKING, Any
 
 from result import Err, Ok, Result
 
-from hwconfig.installer.abstract import Installer
-from hwconfig.util import check_file_exists, ensure_dir, get_json_data_from_file
+from hwconfig.util import get_json_data_from_file
 
 if TYPE_CHECKING:
+    from pathlib import Path
+
     from hwconfig.installer.config import InstallerConfig
-    from hwconfig.settings import Settings
 
 
-class TerminalInstaller(Installer):
+class TerminalInstaller:
     """Installer for Windows Terminal config.
 
     Windows Terminal has a lot of settings that are system specific, and all of them are in a single file.
-    Therefore only the settings that we would like to have shared are stored in the source files, and then written
+    Therefore only the settings that we would like to have shared are stored in the source file, and then written
     to the target config without removing or affecting any other settings.
-
-    If no target file is specified, the default Terminal settings file is used.
     """
 
-    def __init__(self, config: InstallerConfig, settings: Settings) -> None:
-        super().__init__(config=config, settings=settings)
+    def __init__(self, config: InstallerConfig) -> None:
+        self.config: InstallerConfig = config
 
-        if not self.config.target:
-            self.config.target = self._get_target_path()
+    def _get_source_file(self) -> Result[Path, str]:
+        if not self.config.source.exists():
+            return Err(f"Could not find source file at {self.config.source}")
 
-    def backup_dir(self) -> Path:
-        return self.settings.backup_dir / self.config.name
+        if self.config.source.is_file() and self.config.source.suffix == ".json":
+            return Ok(self.config.source)
 
-    @property
-    def backup_file(self) -> Path:
-        return self.backup_dir() / "settings.json"
+        if self.config.source.is_dir() and self.config.source.joinpath("settings.json").exists():
+            return Ok(self.config.source.joinpath("settings.json"))
 
-    def _ensure_source_and_target_files(self) -> Result[str, str]:
-        """Ensure that the source and target paths exist and are files, not directories."""
-        if not self.config.target.exists():
-            self.config.target = self._get_target_path()
-
-        if not self.config.target.exists():
-            return Err("Unable to locate a target config file.")
-
-        if self.config.source.is_dir():
-            source_result = check_file_exists(self.config.source / "settings.json")
-        else:
-            source_result = check_file_exists(self.config.source)
-
-        if self.config.target.is_dir():
-            target_result = check_file_exists(self.config.target / "settings.json")
-        else:
-            target_result = check_file_exists(self.config.target)
-
-        match source_result, target_result:
-            case (Err(e), _):
-                return Err(f"Could not find source file: {e}")
-            case (_, Err(e)):
-                return Err(f"Could not find target file: {e}")
-            case (Ok(source_file), Ok(target_file)):
-                self.config.source = source_file
-                self.config.target = target_file
-                return Ok("Source and target files found")
-
-        return Err("Unknown error occurred")
+        return Err(f"Could not find a valid source file at {self.config.source}")
 
     def _get_source_and_target_json_data(self) -> Result[tuple[dict[Any, Any], dict[Any, Any]], str]:
         """Install terminal settings by copying relevant settings from source to the terminal settings file."""
-        source_data_result = get_json_data_from_file(file=self.config.source)
+        match self._get_source_file():
+            case Ok(v):
+                source = v
+            case Err(e):
+                return Err(e)
+
+        source_data_result = get_json_data_from_file(file=source)
         destination_data_result = get_json_data_from_file(file=self.config.target)
 
         match source_data_result, destination_data_result:
@@ -118,19 +92,8 @@ class TerminalInstaller(Installer):
             json.dump(target_data, file)
             return Ok(f"Updated {self.config.name} config file")
 
-    # TODO: Break this method up into smaller methods
-    def install(self) -> Result[str, str]:  # noqa: PLR0911
+    def install(self) -> Result[str, str]:
         """Install terminal settings by copying relevant settings from source to the terminal settings file."""
-        if not self.backup_file.exists():
-            backup_result = self.backup()
-
-            if backup_result.is_err():
-                return backup_result
-
-        ensure_files_result = self._ensure_source_and_target_files()
-        if ensure_files_result.is_err():
-            return ensure_files_result
-
         data_result = self._get_source_and_target_json_data()
         match data_result:
             case Err(_):
@@ -157,33 +120,10 @@ class TerminalInstaller(Installer):
         return Err("Unknown error occurred")
 
     def uninstall(self) -> Result[str, str]:
-        """Uninstall the config file by deleting it and restoring the backup."""
-        ensure_files_result = self._ensure_source_and_target_files()
-
-        if ensure_files_result.is_err():
-            return ensure_files_result
-
-        if not self.backup_dir().exists():
-            return Err(f"{self.config.name} backup does not exist, nothing to revert to.")
-
-        self.config.target.unlink()
-        copy2(src=self.backup_file, dst=self.config.target)
+        """Uninstall the config file by deleting it."""
+        try:
+            self.config.target.unlink()
+        except FileNotFoundError as e:
+            return Err(f"Failed to remove {self.config.name} config: {e}")
 
         return Ok(f"Uninstalled {self.config.name} config file and restored backup.")
-
-    def backup(self) -> Result[str, str]:
-        """Back up the target file to the backup directory."""
-        ensure_dir(self.backup_dir())
-        copy2(self.config.target, self.backup_file)
-
-        return Ok(f"Created backup of {self.config.name} config file")
-
-    def _get_target_path(self) -> Path:
-        return Path.home().joinpath(
-            "AppData",
-            "Local",
-            "Packages",
-            "Microsoft.WindowsTerminal_8wekyb3d8bbwe",
-            "LocalState",
-            "settings.json",
-        )
