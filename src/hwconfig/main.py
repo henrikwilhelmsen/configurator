@@ -10,6 +10,7 @@ from hwconfig.settings import get_settings
 # TODO: Test coverage (util module, terminal installer)
 # TODO: CLI Tests
 # TODO: Documentation pass
+# TODO: Add command for listing application paths (root, data repo, etc.)
 
 
 pass_installers = click.make_pass_decorator(list)

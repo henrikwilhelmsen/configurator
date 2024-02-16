@@ -1,7 +1,6 @@
 import json
 import platform
 from pathlib import Path
-from subprocess import CalledProcessError, check_output
 
 from result import Err, Ok, Result
 
@@ -45,34 +44,3 @@ def get_json_data_from_file(file: Path) -> Result[dict[str, str], str]:
             return Ok(json.load(f))
     except PermissionError as e:
         return Err(str(e))
-
-
-def get_powershell_dir() -> Result[Path, str]:
-    """Get the PowerShell user directory located in <user_paths>/Documents/PowerShell."""
-    try:
-        documents_dir = check_output(
-            args=["powershell.exe", "[Environment]::GetFolderPath('MyDocuments')"],
-            encoding="utf-8",
-            shell=True,
-        ).splitlines()[0]
-
-    except CalledProcessError as e:
-        return Err(e.output)
-
-    powershell_dir = Path(documents_dir) / "PowerShell"
-
-    if powershell_dir.exists():
-        return Ok(powershell_dir)
-
-    return Err("Powershell directory does not exist.")
-
-
-def get_win_terminal_config() -> Path:
-    return Path.home().joinpath(
-        "AppData",
-        "Local",
-        "Packages",
-        "Microsoft.WindowsTerminal_8wekyb3d8bbwe",
-        "LocalState",
-        "settings.json",
-    )

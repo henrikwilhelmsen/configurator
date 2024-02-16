@@ -24,28 +24,29 @@ class TerminalInstaller:
     def __init__(self, config: InstallerConfig) -> None:
         self.config: InstallerConfig = config
 
-    def _get_source_file(self) -> Result[Path, str]:
-        if not self.config.source.exists():
-            return Err(f"Could not find source file at {self.config.source}")
+    def _get_source_settings_file(self) -> Result[Path, str]:
+        source_file = self.config.source / "settings.json"
+        if not source_file.exists():
+            return Err(f"Could not find source file at {source_file}")
 
-        if self.config.source.is_file() and self.config.source.suffix == ".json":
-            return Ok(self.config.source)
+        return Ok(source_file)
 
-        if self.config.source.is_dir() and self.config.source.joinpath("settings.json").exists():
-            return Ok(self.config.source.joinpath("settings.json"))
+    def _get_target_settings_file(self) -> Result[Path, str]:
+        target_file = self.config.target / "settings.json"
 
-        return Err(f"Could not find a valid source file at {self.config.source}")
+        if not target_file.exists():
+            return Err(f"Could not find source file at {target_file}")
 
-    def _get_source_and_target_json_data(self) -> Result[tuple[dict[Any, Any], dict[Any, Any]], str]:
+        return Ok(target_file)
+
+    def _get_source_and_target_json_data(
+        self,
+        source_file: Path,
+        target_file: Path,
+    ) -> Result[tuple[dict[Any, Any], dict[Any, Any]], str]:
         """Install terminal settings by copying relevant settings from source to the terminal settings file."""
-        match self._get_source_file():
-            case Ok(v):
-                source = v
-            case Err(e):
-                return Err(e)
-
-        source_data_result = get_json_data_from_file(file=source)
-        destination_data_result = get_json_data_from_file(file=self.config.target)
+        source_data_result = get_json_data_from_file(file=source_file)
+        destination_data_result = get_json_data_from_file(file=target_file)
 
         match source_data_result, destination_data_result:
             case (Err(e), _):
@@ -57,7 +58,6 @@ class TerminalInstaller:
 
         return Err("Unknown error occurred")
 
-    # TODO: Add error paths
     def _copy_source_data_to_target(
         self,
         source_data: dict[Any, Any],
@@ -87,14 +87,33 @@ class TerminalInstaller:
 
         return Ok(target_data)
 
-    def _write_target_data_to_file(self, target_data: dict[Any, Any]) -> Result[str, str]:
-        with self.config.target.open("w", encoding="utf-8") as file:
-            json.dump(target_data, file)
-            return Ok(f"Updated {self.config.name} config file")
+    def _write_target_data_to_file(self, target_data: dict[Any, Any], target_file: Path) -> Result[str, str]:
+        try:
+            with target_file.open("w", encoding="utf-8") as file:
+                json.dump(target_data, file)
+                return Ok(f"Updated {self.config.name} config file")
 
-    def install(self) -> Result[str, str]:
+        except FileNotFoundError as e:
+            return Err(f"Failed to write to {self.config.name} config file: {e}")
+
+        except PermissionError as e:
+            return Err(f"Failed to write to {self.config.name} config file: {e}")
+
+    def install(self) -> Result[str, str]:  # noqa: PLR0911
         """Install terminal settings by copying relevant settings from source to the terminal settings file."""
-        data_result = self._get_source_and_target_json_data()
+        source_file_result = self._get_source_settings_file()
+        target_file_result = self._get_target_settings_file()
+
+        match source_file_result, target_file_result:
+            case (Err(_), _):
+                return source_file_result
+            case (_, Err(_)):
+                return target_file_result
+            case (Ok(source_val), Ok(target_val)):
+                source_file = source_val
+                target_file = target_val
+                data_result = self._get_source_and_target_json_data(source_file=source_file, target_file=target_file)
+
         match data_result:
             case Err(_):
                 return data_result
@@ -105,7 +124,7 @@ class TerminalInstaller:
             case Err(_):
                 return copy_data_result
             case Ok(target_data):
-                write_file_result = self._write_target_data_to_file(target_data)
+                write_file_result = self._write_target_data_to_file(target_data, target_file=target_file)
 
         match write_file_result:
             case Err(_):
@@ -123,6 +142,10 @@ class TerminalInstaller:
         """Uninstall the config file by deleting it."""
         try:
             self.config.target.unlink()
+
+        except PermissionError as e:
+            return Err(f"Failed to remove {self.config.name} config: {e}")
+
         except FileNotFoundError as e:
             return Err(f"Failed to remove {self.config.name} config: {e}")
 

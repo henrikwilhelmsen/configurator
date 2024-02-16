@@ -1,9 +1,7 @@
-from pathlib import Path
-
-from pydantic import BaseModel
+from pydantic import BaseModel, DirectoryPath
 
 
 class InstallerConfig(BaseModel):
     name: str
-    source: Path
-    target: Path
+    source: DirectoryPath
+    target: DirectoryPath
