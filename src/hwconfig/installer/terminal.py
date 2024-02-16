@@ -150,3 +150,6 @@ class TerminalInstaller:
             return Err(f"Failed to remove {self.config.name} config: {e}")
 
         return Ok(f"Uninstalled {self.config.name} config file and restored backup.")
+
+    def write_to_source(self) -> Result[str, str]:
+        return Err("Terminal config does not support writing to source yet.")

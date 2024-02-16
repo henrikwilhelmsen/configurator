@@ -14,9 +14,13 @@ class Installer(Protocol):
         ...
 
     def install(self) -> Result[str, str]:
-        """Install the config source files."""
+        """Install the config source files to the target directory."""
         ...
 
     def uninstall(self) -> Result[str, str]:
-        """Uninstall the config files and restore the backup."""
+        """Delete the config files."""
+        ...
+
+    def write_to_source(self) -> Result[str, str]:
+        """Write the target config files to the source directory."""
         ...

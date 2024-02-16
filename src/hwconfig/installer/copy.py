@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from shutil import copytree, rmtree
+from shutil import copy2, copytree, rmtree
 from typing import TYPE_CHECKING
 
 from result import Err, Ok, Result
@@ -35,3 +35,19 @@ class CopyInstaller:
             return Err(f"Failed to remove {self.config.name} config: {e}")
 
         return Ok(f"Removed {self.config.name} config files.")
+
+    def write_to_source(self) -> Result[str, str]:
+        source_names = [p.name for p in self.config.source.glob("*")]
+        target_paths = list(self.config.target.glob("*"))
+        matched_paths = [p for p in target_paths if p.name in source_names]
+
+        try:
+            for p in matched_paths:
+                if p.is_dir():
+                    copytree(src=p, dst=self.config.source / p.name, dirs_exist_ok=True)
+                else:
+                    copy2(src=p, dst=self.config.source / p.name)
+        except OSError as e:
+            return Err(f"Failed to write to {self.config.name} source: {e}")
+
+        return Ok(f"Copied {self.config.name} target file to source")
