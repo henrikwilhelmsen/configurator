@@ -141,7 +141,7 @@ def linux_installers() -> Result[list[Installer], str]:
     return Ok(installers)
 
 
-def installers() -> Result[list[Installer], str]:
+def get_installers() -> Result[list[Installer], str]:
     if in_windows():
         return windows_installers()
     if in_linux():

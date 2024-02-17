@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from shutil import copy2, copytree, rmtree
+from shutil import copy2, copytree
 from typing import TYPE_CHECKING
 
 from result import Err, Ok, Result
@@ -26,15 +26,6 @@ class CopyInstaller:
             return Err(f"Failed to install {self.config.name} config: {e}")
 
         return Ok(f"Installed {self.config.name} config files")
-
-    def uninstall(self) -> Result[str, str]:
-        """Uninstall the config files by deleting them and restoring the backup."""
-        try:
-            rmtree(self.config.target)
-        except OSError as e:
-            return Err(f"Failed to remove {self.config.name} config: {e}")
-
-        return Ok(f"Removed {self.config.name} config files.")
 
     def write_to_source(self) -> Result[str, str]:
         source_names = [p.name for p in self.config.source.glob("*")]

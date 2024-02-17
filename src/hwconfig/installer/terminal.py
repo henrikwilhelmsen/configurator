@@ -35,7 +35,7 @@ class TerminalInstaller:
         target_file = self.config.target / "settings.json"
 
         if not target_file.exists():
-            return Err(f"Could not find source file at {target_file}")
+            return Err(f"Could not find target file at {target_file}")
 
         return Ok(target_file)
 
@@ -91,7 +91,7 @@ class TerminalInstaller:
         try:
             with target_file.open("w", encoding="utf-8") as file:
                 json.dump(target_data, file)
-                return Ok(f"Updated {self.config.name} config file")
+                return Ok(f"Data written to {self.config.name} config file")
 
         except FileNotFoundError as e:
             return Err(f"Failed to write to {self.config.name} config file: {e}")
@@ -128,28 +128,11 @@ class TerminalInstaller:
 
         match write_file_result:
             case Err(_):
-                uninstall_result = self.uninstall()
-                if uninstall_result.is_err():
-                    return uninstall_result
-
                 return write_file_result
-            case Ok(_):
-                return Ok(f"Installed {self.config.name} config file")
+            case Ok(v):
+                return Ok(v)
 
         return Err("Unknown error occurred")
-
-    def uninstall(self) -> Result[str, str]:
-        """Uninstall the config file by deleting it."""
-        try:
-            self.config.target.unlink()
-
-        except PermissionError as e:
-            return Err(f"Failed to remove {self.config.name} config: {e}")
-
-        except FileNotFoundError as e:
-            return Err(f"Failed to remove {self.config.name} config: {e}")
-
-        return Ok(f"Uninstalled {self.config.name} config file and restored backup.")
 
     def write_to_source(self) -> Result[str, str]:
         return Err("Terminal config does not support writing to source yet.")

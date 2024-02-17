@@ -28,15 +28,3 @@ def test_install_fail(monkeypatch: pytest.MonkeyPatch, installer: CopyInstaller)
     monkeypatch.setattr("hwconfig.installer.copy.copytree", mock_copytree)
     result = installer.install()
     assert isinstance(result, Err)
-
-
-def test_uninstall(installer: CopyInstaller) -> None:
-    result = installer.uninstall()
-    assert isinstance(result, Ok)
-
-
-def test_uninstall_fail(monkeypatch: pytest.MonkeyPatch, installer: CopyInstaller) -> None:
-    mock_rmtree = MagicMock(side_effect=OSError("error"))
-    monkeypatch.setattr("hwconfig.installer.copy.rmtree", mock_rmtree)
-    result = installer.uninstall()
-    assert isinstance(result, Err)
