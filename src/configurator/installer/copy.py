@@ -5,10 +5,10 @@ from typing import TYPE_CHECKING
 
 from result import Err, Ok, Result
 
-from hwconfig.util import ensure_dir
+from configurator.util import ensure_dir
 
 if TYPE_CHECKING:
-    from hwconfig.installer.config import InstallerConfig
+    from configurator.installer.config import InstallerConfig
 
 
 class CopyInstaller:

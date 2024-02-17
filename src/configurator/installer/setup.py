@@ -3,12 +3,12 @@ from subprocess import CalledProcessError, check_output
 
 from result import Err, Ok, Result
 
-from hwconfig.installer.config import InstallerConfig
-from hwconfig.installer.copy import CopyInstaller
-from hwconfig.installer.protocol import Installer
-from hwconfig.installer.terminal import TerminalInstaller
-from hwconfig.settings import get_settings
-from hwconfig.util import in_linux, in_windows
+from configurator.installer.config import InstallerConfig
+from configurator.installer.copy import CopyInstaller
+from configurator.installer.protocol import Installer
+from configurator.installer.terminal import TerminalInstaller
+from configurator.settings import get_settings
+from configurator.util import in_linux, in_windows
 
 
 def get_powershell_dir() -> Result[Path, str]:

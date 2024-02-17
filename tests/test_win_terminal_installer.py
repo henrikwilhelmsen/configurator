@@ -3,8 +3,8 @@ from pathlib import Path
 import pytest
 from result import Ok
 
-from hwconfig.installer.config import InstallerConfig
-from hwconfig.installer.terminal import TerminalInstaller
+from configurator.installer.config import InstallerConfig
+from configurator.installer.terminal import TerminalInstaller
 
 
 @pytest.fixture(name="mock_config")

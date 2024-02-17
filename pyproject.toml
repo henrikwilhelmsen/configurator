@@ -1,5 +1,5 @@
 [project]
-name = "hwconfig"
+name = "configurator"
 description = "CLI application for managing config files"
 authors = [
     { name = "Henrik Wilhelmsen", email = "contact@henrikwilhelmsen.com" },
@@ -21,7 +21,7 @@ requires = ["pdm-backend"]
 build-backend = "pdm.backend"
 
 [project.scripts]
-hwconfig = "hwconfig.main:hwconfig"
+cfg = "configurator.cli:cfg"
 
 [tool.ruff]
 line-length = 120
@@ -44,10 +44,10 @@ target-version = "py312"
 pydocstyle.convention = "google"
 
 [tool.pytest.ini_options]
-addopts = ["--cov=hwconfig", "--cov-report=xml:cov.xml"]
+addopts = ["--cov=configurator", "--cov-report=xml:cov.xml"]
 
 [tool.pdm]
-distribution = "true"
+distribution = true
 
 [tool.pdm.build]
 includes = ["src"]

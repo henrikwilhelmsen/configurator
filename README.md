@@ -1,4 +1,4 @@
-# hw-config-cli
+# configurator
 
 Python cli app to manage and install config files from a GitHub repository.
 
@@ -9,7 +9,7 @@ The cli app requires Python 3.10 or later and [pipx](https://pypa.github.io/pipx
 Install with pipx:
 
 ```shell
-pipx install git+https://github.com/henrikwilhelmsen/hw-config-cli.git
+pipx install git+https://github.com/henrikwilhelmsen/configurator.git
 ```
 
 ## Usage
@@ -17,5 +17,5 @@ pipx install git+https://github.com/henrikwilhelmsen/hw-config-cli.git
 To get a list of available commands:
 
 ```shell
-hwconfig --help
+cfg --help
 ```

@@ -7,7 +7,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class _Settings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="HWCONFIG_")
-    data_repo_url: str = "https://github.com/henrikwilhelmsen/hw-config-data.git"
+    data_repo_url: str = "https://github.com/henrikwilhelmsen/config-files.git"
 
     @computed_field
     @property

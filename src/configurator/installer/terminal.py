@@ -5,12 +5,12 @@ from typing import TYPE_CHECKING, Any
 
 from result import Err, Ok, Result
 
-from hwconfig.util import get_json_data_from_file
+from configurator.util import get_json_data_from_file
 
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from hwconfig.installer.config import InstallerConfig
+    from configurator.installer.config import InstallerConfig
 
 
 class TerminalInstaller:

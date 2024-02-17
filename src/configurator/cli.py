@@ -4,9 +4,9 @@ import click
 from git import Repo
 from result import Err, Ok
 
-from hwconfig.installer.protocol import Installer
-from hwconfig.installer.setup import get_installers
-from hwconfig.settings import get_settings
+from configurator.installer.protocol import Installer
+from configurator.installer.setup import get_installers
+from configurator.settings import get_settings
 
 # TODO: Test coverage (util module, terminal installer)
 # TODO: CLI Tests
@@ -14,11 +14,11 @@ from hwconfig.settings import get_settings
 
 
 @click.group()
-def hwconfig() -> None:
-    """hw-config-cli: A tool for managing config files."""
+def cfg() -> None:
+    """configurator: A tool for managing config files."""
 
 
-@hwconfig.command("pull")
+@cfg.command("pull")
 def pull_data_repo_cmd() -> None:
     """Pull changes from the data repo."""
     settings = get_settings()
@@ -32,14 +32,14 @@ def pull_data_repo_cmd() -> None:
     click.echo("Data repo synced.")
 
 
-@hwconfig.command("push")
+@cfg.command("push")
 @click.argument("message")
 def push_data_repo_cmd(message: str) -> None:
     """Commit and push changes to the data repo."""
     settings = get_settings()
 
     if not settings.data_repo_dir.exists():
-        click.echo("Data repo does not exist. Run `hwconfig pull` to create it.")
+        click.echo("Data repo does not exist. Run `cgf pull` to create it.")
         return
 
     repo = Repo(settings.data_repo_dir)
@@ -50,13 +50,13 @@ def push_data_repo_cmd(message: str) -> None:
     click.echo("Data repo synced.")
 
 
-@hwconfig.command("status")
+@cfg.command("status")
 def status_cmd() -> None:
     """Get the git status of the data repo."""
     settings = get_settings()
 
     if not settings.data_repo_dir.exists():
-        click.echo("Data repo does not exist. Run `hwconfig pull` to create it.")
+        click.echo("Data repo does not exist. Run `cgf pull` to create it.")
         return
 
     repo = Repo(settings.data_repo_dir)
@@ -64,7 +64,7 @@ def status_cmd() -> None:
     click.echo(repo.git.status())
 
 
-@hwconfig.command("list")
+@cfg.command("list")
 def list_cmd() -> None:
     """List available configs."""
     match get_installers():
@@ -75,7 +75,7 @@ def list_cmd() -> None:
             click.echo(f"Failed to list installers: {e}")
 
 
-@hwconfig.command("install")
+@cfg.command("install")
 def install_cmd() -> None:
     """Install config files, copying from data repo to local paths."""
     match get_installers():
@@ -93,7 +93,7 @@ def install_cmd() -> None:
                 click.echo(f"Error: {e}")
 
 
-@hwconfig.command("uninstall")
+@cfg.command("uninstall")
 def uninstall_cmd() -> None:
     """Delete installed config files and the local data repo."""
     try:
@@ -108,7 +108,7 @@ def uninstall_cmd() -> None:
         return click.echo(f"Failed to remove data repo: {e}")
 
 
-@hwconfig.command("from-local")
+@cfg.command("from-local")
 @click.argument("configs", nargs=-1)
 def from_local_cmd(installers: list[Installer], configs: tuple[str]) -> None:
     """Copy local config files to the data repo."""
@@ -129,7 +129,7 @@ def from_local_cmd(installers: list[Installer], configs: tuple[str]) -> None:
                         click.echo(f"Error: {e}")
 
 
-@hwconfig.command("settings")
+@cfg.command("settings")
 def settings_cmd() -> None:
     """View the current settings."""
     click.echo(get_settings().model_dump_json(indent=2))

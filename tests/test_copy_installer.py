@@ -4,8 +4,8 @@ from unittest.mock import MagicMock
 import pytest
 from result import Err, Ok
 
-from hwconfig.installer.config import InstallerConfig
-from hwconfig.installer.copy import CopyInstaller
+from configurator.installer.config import InstallerConfig
+from configurator.installer.copy import CopyInstaller
 
 
 @pytest.fixture(name="mock_config")
@@ -25,6 +25,6 @@ def test_install(installer: CopyInstaller) -> None:
 
 def test_install_fail(monkeypatch: pytest.MonkeyPatch, installer: CopyInstaller) -> None:
     mock_copytree = MagicMock(side_effect=OSError("error"))
-    monkeypatch.setattr("hwconfig.installer.copy.copytree", mock_copytree)
+    monkeypatch.setattr("configurator.installer.copy.copytree", mock_copytree)
     result = installer.install()
     assert isinstance(result, Err)
