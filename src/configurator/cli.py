@@ -34,7 +34,8 @@ def pull_data_repo_cmd() -> None:
 
 @cfg.command("push")
 @click.argument("message")
-def push_data_repo_cmd(message: str) -> None:
+@click.option("--dry-run", is_flag=True)
+def push_data_repo_cmd(message: str, dry_run: bool) -> None:  # noqa: FBT001
     """Commit and push changes to the data repo."""
     settings = get_settings()
 
@@ -43,11 +44,23 @@ def push_data_repo_cmd(message: str) -> None:
         return
 
     repo = Repo(settings.data_repo_dir)
-    repo.index.add(repo.untracked_files)  # type: ignore[partially-unknown-call]
-    repo.index.commit(message)
-    repo.remotes.origin.push()
 
-    click.echo("Data repo synced.")
+    files: list[str] = [item.a_path for item in repo.index.diff(None)]  # type: ignore[partially-unknown-call]
+    files.extend(repo.untracked_files)
+
+    if not files:
+        click.echo("No changes to push.")
+        return
+
+    if not dry_run:
+        repo.index.add(files)  # type: ignore[partially-unknown-call]
+        repo.index.commit(message)
+        repo.remotes.origin.push()
+
+    click.echo("\nFiles committed and pushed to data repo:\n")
+    for file in files:
+        click.echo(f"   {file}")
+    click.echo("")
 
 
 @cfg.command("status")
