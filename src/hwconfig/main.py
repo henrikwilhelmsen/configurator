@@ -8,11 +8,9 @@ from hwconfig.installer.protocol import Installer
 from hwconfig.installer.setup import get_installers
 from hwconfig.settings import get_settings
 
-# TODO: Implement submit command
 # TODO: Test coverage (util module, terminal installer)
 # TODO: CLI Tests
 # TODO: Documentation pass
-# TODO: Add command for listing application paths (root, data repo, etc.)
 
 
 @click.group()
