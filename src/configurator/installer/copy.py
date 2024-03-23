@@ -1,3 +1,4 @@
+"""Module containing the copy installer."""
 from __future__ import annotations
 
 from shutil import copy2, copytree
@@ -15,10 +16,19 @@ class CopyInstaller:
     """Installer for config files that only need to be copied to a target location."""
 
     def __init__(self, config: InstallerConfig) -> None:
+        """Initialize the installer.
+
+        Args:
+            config: Config for the installer.
+        """
         self.config: InstallerConfig = config
 
     def install(self) -> Result[str, str]:
-        """Install the config files by copying source dir to target."""
+        """Install the config source files to the target directory.
+
+        Returns:
+            A result containing a success message or an error message.
+        """
         try:
             ensure_dir(self.config.target)
             copytree(src=self.config.source, dst=self.config.target, dirs_exist_ok=True)
@@ -28,7 +38,11 @@ class CopyInstaller:
         return Ok(f"Installed {self.config.name} config files")
 
     def write_to_source(self) -> Result[str, str]:
-        """Write the target config files back to the source directory."""
+        """Write the target config files back to the source directory.
+
+        Returns:
+            A result containing a success message or an error message.
+        """
         source_names = [p.name for p in self.config.source.glob("*")]
         target_paths = list(self.config.target.glob("*"))
         matched_paths = [p for p in target_paths if p.name in source_names]

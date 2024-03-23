@@ -1,3 +1,4 @@
+"""configurator: A tool for managing config files."""
 from shutil import rmtree
 
 import click
@@ -14,14 +15,29 @@ from configurator.settings import get_settings
 
 
 def click_echo_success(string: str) -> None:
+    """Success formatted `click.echo`.
+
+    Args:
+        string: The string to echo.
+    """
     click.echo(click.style(string, fg="green"))
 
 
 def click_echo_error(string: str) -> None:
+    """Error formatted `click.echo`.
+
+    Args:
+        string: The string to echo.
+    """
     click.echo(click.style(string, fg="red"))
 
 
 def click_echo_warning(string: str) -> None:
+    """Warning formatted `click.echo`.
+
+    Args:
+        string: The string to echo.
+    """
     click.echo(click.style(string, fg="orange"))
 
 

@@ -1,10 +1,15 @@
+"""Installer setup functions."""
 from pathlib import Path
 
 from result import Err, Ok, Result
 
 from configurator.installer.config import InstallerConfig
 from configurator.installer.copy import CopyInstaller
-from configurator.installer.paths import get_flow_config_dir, get_powershell_config_dir, get_win_terminal_config_dir
+from configurator.installer.paths import (
+    get_flow_config_dir,
+    get_powershell_config_dir,
+    get_win_terminal_config_dir,
+)
 from configurator.installer.protocol import Installer
 from configurator.installer.terminal import TerminalInstaller
 from configurator.settings import get_settings
@@ -12,6 +17,11 @@ from configurator.util import in_linux, in_windows
 
 
 def powershell_installer() -> Result[Installer, str]:
+    """Set up the installer for the PowerShell config.
+
+    Returns:
+        A result containing the installer or an error message.
+    """
     settings = get_settings()
     source = settings.data_repo_dir / "powershell"
 
@@ -26,6 +36,11 @@ def powershell_installer() -> Result[Installer, str]:
 
 
 def terminal_installer() -> Result[Installer, str]:
+    """Set up the installer for the Windows Terminal config.
+
+    Returns:
+        A result containing the installer or an error message.
+    """
     settings = get_settings()
     source = settings.data_repo_dir / "terminal"
 
@@ -40,6 +55,11 @@ def terminal_installer() -> Result[Installer, str]:
 
 
 def flow_installer() -> Result[Installer, str]:
+    """Set up the installer for the Flow config.
+
+    Returns:
+        A result containing the installer or an error message.
+    """
     settings = get_settings()
     source = settings.data_repo_dir / "flow"
 
@@ -54,6 +74,11 @@ def flow_installer() -> Result[Installer, str]:
 
 
 def fish_installer() -> Result[Installer, str]:
+    """Set up the installer for the Fish config.
+
+    Returns:
+        A result containing the installer or an error message.
+    """
     settings = get_settings()
     source = settings.data_repo_dir / "fish"
     target = Path.home() / ".config" / "fish"
@@ -63,6 +88,11 @@ def fish_installer() -> Result[Installer, str]:
 
 
 def hyper_installer() -> Result[Installer, str]:
+    """Set up the installer for the Hyper config.
+
+    Returns:
+        A result containing the installer or an error message.
+    """
     settings = get_settings()
     source = settings.data_repo_dir / "hyper"
     target = Path.home()
@@ -72,6 +102,11 @@ def hyper_installer() -> Result[Installer, str]:
 
 
 def windows_installers() -> Result[list[Installer], str]:
+    """Set up the installers for the Windows configs.
+
+    Returns:
+        A result containing the installers or an error message.
+    """
     installers: list[Installer] = []
 
     for r in (powershell_installer(), terminal_installer(), flow_installer()):
@@ -85,6 +120,11 @@ def windows_installers() -> Result[list[Installer], str]:
 
 
 def linux_installers() -> Result[list[Installer], str]:
+    """Set up the installers for the Linux configs.
+
+    Returns:
+        A result containing the installers or an error message.
+    """
     installers: list[Installer] = []
 
     for r in (fish_installer(), hyper_installer()):
@@ -98,6 +138,11 @@ def linux_installers() -> Result[list[Installer], str]:
 
 
 def get_installers() -> Result[list[Installer], str]:
+    """Set up the installers for the current platform.
+
+    Returns:
+        A result containing the installers or an error message.
+    """
     if in_windows():
         return windows_installers()
     if in_linux():
