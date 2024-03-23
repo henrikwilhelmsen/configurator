@@ -1,70 +1,31 @@
+"""Installer setup functions."""
 from pathlib import Path
-from subprocess import CalledProcessError, check_output
 
 from result import Err, Ok, Result
 
 from configurator.installer.config import InstallerConfig
 from configurator.installer.copy import CopyInstaller
+from configurator.installer.paths import (
+    get_flow_config_dir,
+    get_powershell_config_dir,
+    get_win_terminal_config_dir,
+)
 from configurator.installer.protocol import Installer
 from configurator.installer.terminal import TerminalInstaller
 from configurator.settings import get_settings
 from configurator.util import in_linux, in_windows
 
 
-def get_powershell_dir() -> Result[Path, str]:
-    """Get the PowerShell user directory located in <user_paths>/Documents/PowerShell."""
-    try:
-        documents_dir = check_output(
-            args=["powershell.exe", "[Environment]::GetFolderPath('MyDocuments')"],
-            encoding="utf-8",
-            shell=True,
-        ).splitlines()[0]
-
-    except CalledProcessError as e:
-        return Err(e.output)
-
-    powershell_dir = Path(documents_dir) / "PowerShell"
-
-    if powershell_dir.exists():
-        return Ok(powershell_dir)
-
-    return Err("Powershell directory does not exist.")
-
-
-def get_win_terminal_config_dir() -> Path:
-    """Get the path to the Windows Terminal settings.json file."""
-    return Path.home().joinpath(
-        "AppData",
-        "Local",
-        "Packages",
-        "Microsoft.WindowsTerminal_8wekyb3d8bbwe",
-        "LocalState",
-    )
-
-
-def get_flow_config() -> Result[Path, str]:
-    """Get the path to the Flow Launcher Settings.json file. (When installed with Scoop).
-
-    C:/Users/<username>/scoop/apps/flow-launcher/current/app-<version>/UserData/Settings/
-    """
-    flow_dir = Path.home() / "scoop" / "apps" / "flow-launcher" / "current"
-    config_dir: Path | None = None
-
-    for p in flow_dir.glob("*"):
-        if p.is_dir() and p.name.startswith("app-"):
-            config_dir = p / "UserData" / "Settings"
-
-    if config_dir and config_dir.exists():
-        return Ok(config_dir)
-
-    return Err("Flow config not found.")
-
-
 def powershell_installer() -> Result[Installer, str]:
+    """Set up the installer for the PowerShell config.
+
+    Returns:
+        A result containing the installer or an error message.
+    """
     settings = get_settings()
     source = settings.data_repo_dir / "powershell"
 
-    match get_powershell_dir():
+    match get_powershell_config_dir():
         case Ok(v):
             target = v
         case Err(e):
@@ -75,19 +36,34 @@ def powershell_installer() -> Result[Installer, str]:
 
 
 def terminal_installer() -> Result[Installer, str]:
+    """Set up the installer for the Windows Terminal config.
+
+    Returns:
+        A result containing the installer or an error message.
+    """
     settings = get_settings()
     source = settings.data_repo_dir / "terminal"
-    target = get_win_terminal_config_dir()
-    installer_config = InstallerConfig(name="terminal", source=source, target=target)
 
+    match get_win_terminal_config_dir():
+        case Ok(v):
+            target = v
+        case Err(e):
+            return Err(f"Could not get terminal dir: {e}")
+
+    installer_config = InstallerConfig(name="terminal", source=source, target=target)
     return Ok(TerminalInstaller(config=installer_config))
 
 
 def flow_installer() -> Result[Installer, str]:
+    """Set up the installer for the Flow config.
+
+    Returns:
+        A result containing the installer or an error message.
+    """
     settings = get_settings()
     source = settings.data_repo_dir / "flow"
 
-    match get_flow_config():
+    match get_flow_config_dir():
         case Ok(v):
             target = v
         case Err(e):
@@ -98,6 +74,11 @@ def flow_installer() -> Result[Installer, str]:
 
 
 def fish_installer() -> Result[Installer, str]:
+    """Set up the installer for the Fish config.
+
+    Returns:
+        A result containing the installer or an error message.
+    """
     settings = get_settings()
     source = settings.data_repo_dir / "fish"
     target = Path.home() / ".config" / "fish"
@@ -107,6 +88,11 @@ def fish_installer() -> Result[Installer, str]:
 
 
 def hyper_installer() -> Result[Installer, str]:
+    """Set up the installer for the Hyper config.
+
+    Returns:
+        A result containing the installer or an error message.
+    """
     settings = get_settings()
     source = settings.data_repo_dir / "hyper"
     target = Path.home()
@@ -116,6 +102,11 @@ def hyper_installer() -> Result[Installer, str]:
 
 
 def windows_installers() -> Result[list[Installer], str]:
+    """Set up the installers for the Windows configs.
+
+    Returns:
+        A result containing the installers or an error message.
+    """
     installers: list[Installer] = []
 
     for r in (powershell_installer(), terminal_installer(), flow_installer()):
@@ -129,6 +120,11 @@ def windows_installers() -> Result[list[Installer], str]:
 
 
 def linux_installers() -> Result[list[Installer], str]:
+    """Set up the installers for the Linux configs.
+
+    Returns:
+        A result containing the installers or an error message.
+    """
     installers: list[Installer] = []
 
     for r in (fish_installer(), hyper_installer()):
@@ -142,6 +138,11 @@ def linux_installers() -> Result[list[Installer], str]:
 
 
 def get_installers() -> Result[list[Installer], str]:
+    """Set up the installers for the current platform.
+
+    Returns:
+        A result containing the installers or an error message.
+    """
     if in_windows():
         return windows_installers()
     if in_linux():

@@ -1,3 +1,4 @@
+"""Utility functions."""
 import json
 import platform
 from pathlib import Path
@@ -21,6 +22,14 @@ def in_linux() -> bool:
 
 
 def ensure_dir(directory: Path) -> Path:
+    """Ensure the given directory exists.
+
+    Args:
+        directory: The directory to ensure exists.
+
+    Returns:
+        Path to the directory.
+    """
     if not directory.exists():
         directory.mkdir(parents=True)
 
@@ -28,6 +37,14 @@ def ensure_dir(directory: Path) -> Path:
 
 
 def check_file_exists(file: Path) -> Result[Path, str]:
+    """Check if a file exists.
+
+    Args:
+        file: The file to check.
+
+    Returns:
+        A result containing the path to the file, or an error message.
+    """
     if not file.exists():
         return Err(f"File not found at {file}")
 
@@ -35,7 +52,14 @@ def check_file_exists(file: Path) -> Result[Path, str]:
 
 
 def get_json_data_from_file(file: Path) -> Result[dict[str, str], str]:
-    """Get the JSON data from the given file path."""
+    """Get JSON data from a file.
+
+    Args:
+        file: The file to read.
+
+    Returns:
+        A result containing the JSON data from the file, or an error message.
+    """
     if not file.exists():
         return Err(f"File not found at {file}")
 

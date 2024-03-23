@@ -1,3 +1,4 @@
+"""configurator settings."""
 from functools import lru_cache
 from pathlib import Path
 
@@ -25,4 +26,5 @@ Settings = _Settings
 
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:
+    """Get the current settings."""
     return _Settings()

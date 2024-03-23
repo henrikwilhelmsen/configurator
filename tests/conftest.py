@@ -26,6 +26,7 @@ def fixture_test_target_dir(tmp_path: Path) -> Path:
 
 @pytest.fixture(name="test_terminal_source_dir")
 def fixture_test_terminal_source() -> Path:
+    """Fixture containing the path to the test terminal data directory."""
     return Path(__file__).parent / "test_data" / "terminal_source"
 
 
@@ -40,6 +41,6 @@ def fixture_test_terminal_target_dir(tmp_path: Path) -> Path:
 
 @pytest.fixture(name="test_home_dir", scope="class")
 def fixture_test_home_dir(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
-    """An empty tmp directory to use as the hwconfig home dir, monkeypatched to the HWCONFIG_HOME env var."""
+    """An empty tmp directory to use as the hwconfig home dir, for tests."""
     monkeypatch.setenv("HWCONFIG_ROOT_DIR", tmp_path.as_posix())
     return tmp_path

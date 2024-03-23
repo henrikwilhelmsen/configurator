@@ -1,3 +1,4 @@
+"""configurator: A tool for managing config files."""
 from shutil import rmtree
 
 import click
@@ -10,7 +11,33 @@ from configurator.settings import get_settings
 
 # TODO: Test coverage (util module, terminal installer)
 # TODO: CLI Tests
-# TODO: Documentation pass
+
+
+def click_echo_success(string: str) -> None:
+    """Success formatted `click.echo`.
+
+    Args:
+        string: The string to echo.
+    """
+    click.echo(click.style(string, fg="green"))
+
+
+def click_echo_error(string: str) -> None:
+    """Error formatted `click.echo`.
+
+    Args:
+        string: The string to echo.
+    """
+    click.echo(click.style(string, fg="red"))
+
+
+def click_echo_warning(string: str) -> None:
+    """Warning formatted `click.echo`.
+
+    Args:
+        string: The string to echo.
+    """
+    click.echo(click.style(string, fg="orange"))
 
 
 @click.group()
@@ -29,7 +56,7 @@ def pull_data_repo_cmd() -> None:
     else:
         repo = Repo.clone_from(settings.data_repo_url, settings.data_repo_dir)
 
-    click.echo("Data repo synced.")
+    click_echo_success("Data repo synced.")
 
 
 @cfg.command("push")
@@ -40,7 +67,7 @@ def push_data_repo_cmd(message: str, dry_run: bool) -> None:  # noqa: FBT001
     settings = get_settings()
 
     if not settings.data_repo_dir.exists():
-        click.echo("Data repo does not exist. Run `cgf pull` to create it.")
+        click_echo_warning("Data repo does not exist. Run `cgf pull` to create it.")
         return
 
     repo = Repo(settings.data_repo_dir)
@@ -57,7 +84,7 @@ def push_data_repo_cmd(message: str, dry_run: bool) -> None:  # noqa: FBT001
         repo.index.commit(message)
         repo.remotes.origin.push()
 
-    click.echo("\nFiles committed and pushed to data repo:\n")
+    click_echo_success("\nFiles committed and pushed to data repo:\n")
     for file in files:
         click.echo(f"   {file}")
     click.echo("")
@@ -69,7 +96,7 @@ def status_cmd() -> None:
     settings = get_settings()
 
     if not settings.data_repo_dir.exists():
-        click.echo("Data repo does not exist. Run `cgf pull` to create it.")
+        click_echo_warning("Data repo does not exist. Run `cgf pull` to create it.")
         return
 
     repo = Repo(settings.data_repo_dir)
@@ -85,7 +112,7 @@ def list_cmd() -> None:
             for installer in v:
                 click.echo(installer.config.name)
         case Err(e):
-            click.echo(f"Failed to list installers: {e}")
+            click_echo_error(f"Failed to list installers: {e}")
 
 
 @cfg.command("install")
@@ -95,15 +122,15 @@ def install_cmd() -> None:
         case Ok(v):
             installers = v
         case Err(e):
-            click.echo(f"Failed to get installers: {e}")
+            click_echo_error(f"Failed to get installers: {e}")
             return
 
     for installer in installers:
         match installer.install():
             case Ok(v):
-                click.echo(v)
+                click_echo_success(v)
             case Err(e):
-                click.echo(f"Error: {e}")
+                click_echo_error(f"Error: {e}")
 
 
 @cfg.command("uninstall")
@@ -112,13 +139,16 @@ def uninstall_cmd() -> None:
     try:
         settings = get_settings()
         rmtree(settings.data_repo_dir)
-        click.echo("Data repo removed.")
+        click_echo_success("Data repo removed.")
     except PermissionError as e:
-        return click.echo(f"Failed to remove data repo: {e}")
+        click_echo_error(f"Failed to remove data repo: {e}")
+        return
     except FileNotFoundError as e:
-        return click.echo(f"Data repo not found: {e}")
+        click_echo_error(f"Data repo not found: {e}")
+        return
     except OSError as e:
-        return click.echo(f"Failed to remove data repo: {e}")
+        click_echo_error(f"Failed to remove data repo: {e}")
+        return
 
 
 @cfg.command("from-local")
@@ -129,7 +159,7 @@ def from_local_cmd(installers: list[Installer], configs: tuple[str]) -> None:
         case Ok(v):
             installers = v
         case Err(e):
-            click.echo(f"Failed to get installers: {e}")
+            click_echo_error(f"Failed to get installers: {e}")
             return
 
     for config in configs:
@@ -137,9 +167,9 @@ def from_local_cmd(installers: list[Installer], configs: tuple[str]) -> None:
             if installer.config.name == config:
                 match installer.write_to_source():
                     case Ok(v):
-                        click.echo(v)
+                        click_echo_success(v)
                     case Err(e):
-                        click.echo(f"Error: {e}")
+                        click_echo_error(f"Error: {e}")
 
 
 @cfg.command("settings")
