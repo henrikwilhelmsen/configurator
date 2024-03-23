@@ -94,7 +94,9 @@ class TerminalInstaller:
         return Ok(target_data)
 
     def _write_target_data_to_file(
-        self, target_data: dict[Any, Any], target_file: Path
+        self,
+        target_data: dict[Any, Any],
+        target_file: Path,
     ) -> Result[str, str]:
         try:
             with target_file.open("w", encoding="utf-8") as file:
@@ -134,7 +136,8 @@ class TerminalInstaller:
                 return data_result
             case Ok((source_data, destination_data)):
                 copy_data_result = self._copy_source_data_to_target(
-                    source_data, destination_data
+                    source_data,
+                    destination_data,
                 )
 
         match copy_data_result:
@@ -142,7 +145,8 @@ class TerminalInstaller:
                 return copy_data_result
             case Ok(target_data):
                 write_file_result = self._write_target_data_to_file(
-                    target_data, target_file=target_file
+                    target_data,
+                    target_file=target_file,
                 )
 
         match write_file_result:
