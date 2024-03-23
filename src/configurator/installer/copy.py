@@ -28,6 +28,7 @@ class CopyInstaller:
         return Ok(f"Installed {self.config.name} config files")
 
     def write_to_source(self) -> Result[str, str]:
+        """Write the target config files back to the source directory."""
         source_names = [p.name for p in self.config.source.glob("*")]
         target_paths = list(self.config.target.glob("*"))
         matched_paths = [p for p in target_paths if p.name in source_names]
