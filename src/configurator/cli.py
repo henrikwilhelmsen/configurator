@@ -11,7 +11,6 @@ from configurator.settings import get_settings
 
 # TODO: Test coverage (util module, terminal installer)
 # TODO: CLI Tests
-# TODO: Documentation pass
 
 
 def click_echo_success(string: str) -> None:
